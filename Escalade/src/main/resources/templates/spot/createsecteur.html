@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="utf-8">
+<title>Formulaire d'enregistrement d'un secteur</title>
+</head>
+<body>
+	<div layout:fragment="content">
+	<div th:if="${userName != null}">
+		<div th:if="${userName} == ${madeByUser}">
+			<div class="col-md-6">
+				<div class="alert alert-danger" role="alert" th:if="${param.error}">
+					Secteur name incorrect!
+				</div>
+				<form th:action="@{/createSecteur}" method="post">
+					<div class="form-group">
+						<label class="control-label">Nom du spot :</label> 
+						<input class="form-control" type="text" name="spotname" th:value="${spotname}" readonly="readonly" />		
+					</div>
+					<div class="form-group">
+						<label class="control-label">Nom du secteur :</label> 
+						<input class="form-control" type="text" name="secteurname">
+					</div>
+						<button type="submit" class="btn btn-primary">Enregistrer</button>
+				</form>
+			</div>
+		</div>
+	</div>
+		<div th:if="${userName == null}">
+		<br><br><br>
+			<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Il est nécessaire de posséder un compte pour effectuer cette action et d'être connecté.</h1>
+		</div>
+			<div th:if="${userName != null}">
+				<div th:if="${userName} != ${madeByUser}">
+				<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Vous n'avez pas l'autorisation d' appliquer de changement sur ce spot.</h1>
+				</div>
+			</div>
+	</div>
+</body>
+</html>
