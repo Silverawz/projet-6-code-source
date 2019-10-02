@@ -2,19 +2,22 @@ package com.deroussen.controller;
 
 import javax.validation.Valid;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
-
 import com.deroussen.entities.User;
 import com.deroussen.service.UserService;
 
 @Controller
+@SessionAttributes("userName")
 public class UserController {
 	
 	@Autowired
@@ -22,10 +25,9 @@ public class UserController {
 	
 	@RequestMapping(value={"/","/login"}, method=RequestMethod.GET)
 	public ModelAndView login() {
-		ModelAndView model = new ModelAndView();
-		
-		model.setViewName("user/login");
-		return model;
+		ModelAndView modelView = new ModelAndView();
+		modelView.setViewName("user/login");
+		return modelView;
 	}
 	
 	@RequestMapping(value={"/signup"}, method=RequestMethod.GET)
@@ -39,32 +41,31 @@ public class UserController {
 	}
 	
 	@RequestMapping(value={"/signup"}, method=RequestMethod.POST)
-	public ModelAndView createUser(@Valid User user, BindingResult  bindingResult) {
-		ModelAndView model = new ModelAndView();
+	public ModelAndView createUser(@Valid User user, BindingResult bindingResult) {
+		ModelAndView modelView = new ModelAndView();
 		User userExists = userService.findUserByEmail(user.getEmail());
 		
 		if(userExists != null) {
 			bindingResult.rejectValue("email", "error.user","This email already exists!");
 		}
 		if(bindingResult.hasErrors()) {
-			model.setViewName("user/signup");
+			modelView.setViewName("user/signup");
 		}
 		else {
 			userService.saveUser(user);
-			model.addObject("msg","User has been registered successfully!");
-			model.addObject("user",new User());
-			model.setViewName("user/signup");
+			modelView.addObject("msg","User has been registered successfully!");
+			modelView.addObject("user",new User());
+			modelView.setViewName("user/signup");
 		}
-		return model;
+		return modelView;
 	}
 	
 	@RequestMapping(value={"/home/home"}, method=RequestMethod.GET)
 	public ModelAndView home() {
 		ModelAndView model = new ModelAndView();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User user = userService.findUserByEmail(auth.getName());
-		
-		model.addObject("userName", user.getFirstname() + " " + user.getLastname());
+		User user = userService.findUserByEmail(auth.getName());	
+		model.addObject("userName", user.getFirstname());
 		model.setViewName("home/home");
 		return model;
 	}
@@ -77,7 +78,6 @@ public class UserController {
 		return model;
 	}
 	
-	
-	
+
 	
 }

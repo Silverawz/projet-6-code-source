@@ -4,41 +4,37 @@
 <head>
 <meta charset="utf-8">
 <title>Page Layout</title>
-<link rel="stylesheet" href="../static/bootstrap.min.css"
-	th:href="@{css/bootstrap.min.css}">
+<link
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+	rel="stylesheet" id="bootstrap-css">
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css">
 </head>
 <body>
-	<nav class="navbar navbar-inverse">
-		<div class="container-fluid">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle" data-toggle="collapse"
-					data-target="#myNavbar">
-					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
-						class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="#">Les copains de l'escalade</a>
-			</div>
-			<div class="collapse navbar-collapse" id="myNavbar">
-				<ul class="nav navbar-nav">
-					<li class="active"><a href="#">Accueil</a></li>
-					<li><a th:href="@{/index}">Liste des spots</a></li>
-					<li><a th:href="@{/add}">Ajouter un spot</a></li>
-					<li><a href="#">Contact</a></li>
-				</ul>
-				<ul class="nav navbar-nav navbar-right">
-					<li><a th:href="@{/pagelogin}"><span class="glyphicon glyphicon-log-in"></span>
-							Login</a></li>
-				</ul>
+	<nav class="navbar navbar-expand-lg navbar-light bg-light">
+		<a class="navbar-brand" th:href="@{/}">Les amis de l'escalade</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse"
+			data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
+			aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+			<div class="navbar-nav">
+				<a class="nav-item nav-link" th:href="@{/listespot}">Parcourir la liste des spots d'escalade</a>
+				<a class="nav-item nav-link" th:href="@{/createspot}">Ajouter un spot d'escalade</a>
+				<a class="nav-item nav-link" th:href="@{/signup}">Creer un compte</a>
+				<a th:if="${userName == null}" class="nav-item nav-link" th:href="@{/login}">Se connecter</a>
+				<a th:if="${userName != null}" class="nav-item nav-link" th:href="@{/logout}">Se deconnecter</a>
+				<a th:if="${userName != null}" class="nav-item nav-link" th:text="${userName}"></a>
 			</div>
 		</div>
 	</nav>
-	<section layout:fragment="content">
-	</section>
-	
+	<section layout:fragment="content"></section>
 	<footer>
-		<div>
-			FOOTER
-		</div>
+		<div></div>
 	</footer>
 </body>
 </html>
