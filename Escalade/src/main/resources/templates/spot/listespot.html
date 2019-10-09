@@ -22,22 +22,30 @@
 				<div class="panel-body">
 					<table class="table">
 						<tr>
+							<th>ID du spot</th>
 							<th>Nom du spot</th>
 							<th>Equipé</th>
 							<th>Officiel "Les amis de l'escalade"</th>
 							<th>Crée par</th>
 						</tr>
 						<tr th:each="s:${spotlist}">
+							<td th:text=${s.id}></td>
 							<td th:text=${s.spotname}></td>
 							<td th:text=${s.is_equipped}></td>
 							<td th:text=${s.is_official}></td>
-							<td th:text=${s.madeByUser}></td>
-							<td><a th:href="@{/listeSecteur(spotname=${s.spotname}, madeByUser=${s.madeByUser})}">Voir le(s) secteur(s)</a>
+							<td th:text=${s.user.getFirstname()}></td>
+							<td><a th:href="@{/listesecteur(spotname=${s.spotname}, user=${s.user.getEmail()})}">Voir le(s) secteur(s)</a>
 							</td>
-							<td><a th:href="@{/createSecteur(spotname=${s.spotname}, madeByUser=${s.madeByUser})}">Ajouter un secteur</a>
+							<td th:if="${userEmail == s.user.getEmail()}">
+							<a th:href="@{/changespot(spotId=${s.id}, user=${s.user.getEmail()})}">Modifier le spot</a>
 							</td>
-							<td><a onclick="return confirm('Etes vous sur?')" th:href="@{/delete(id=${s.id}, page=${currentPage}, motCle=${motCle})}">Supprimer le spot</a>
+							<td th:if="${userEmail == s.user.getEmail()}">
+							<a th:href="@{/createsecteur(spotname=${s.spotname}, user=${s.user.getEmail()})}">Ajouter un secteur</a>
 							</td>
+							<td th:if="${userEmail == s.user.getEmail()}">
+							<a onclick="return confirm('Etes vous sur?')" th:href="@{/delete(id=${s.id}, page=${currentPage}, motCle=${motCle})}">Supprimer le spot</a>
+							</td>
+							
 						</tr>
 					</table>
 

@@ -44,6 +44,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			.antMatchers("/signup").permitAll()
 			.antMatchers("/createspot").permitAll()
 			.antMatchers("/listespot").permitAll()
+			.antMatchers("/listesecteur").permitAll()
 			.antMatchers("/deletespot").permitAll()
 			.antMatchers("/home/**").hasAuthority("ADMIN").anyRequest()
 			.authenticated().and().csrf().disable()

@@ -1,10 +1,16 @@
 package com.deroussen.entities;
 
+
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -23,20 +29,16 @@ public class Spot {
 	@Column(name="is_official")
 	private boolean is_official;
 
-	@Column(name="madeByUser")
-	private String madeByUser;
-			
+	@OneToMany(mappedBy="spot",cascade = CascadeType.REMOVE)
+	private List <Secteur> secteurs;
+	
+	@ManyToOne
+	private User user;
+	
 	public Spot() {
 		
 	}
-
-	public Spot(Long id, String spotname, boolean is_equipped, boolean is_official) {
-		super();
-		this.id = id;
-		this.spotname = spotname;
-		this.is_equipped = is_equipped;
-		this.is_official = is_official;
-	}
+	
 
 	public Spot(Long id, String spotname, boolean is_equipped) {
 		super();
@@ -45,6 +47,30 @@ public class Spot {
 		this.is_equipped = is_equipped;
 	}
 	
+	public Spot(Long id, String spotname, boolean is_equipped, boolean is_official) {
+		super();
+		this.id = id;
+		this.spotname = spotname;
+		this.is_equipped = is_equipped;
+		this.is_official = is_official;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+	
+	public List<Secteur> getSecteurs() {
+		return secteurs;
+	}
+
+	public void setSecteurs(List<Secteur> secteurs) {
+		this.secteurs = secteurs;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -77,23 +103,5 @@ public class Spot {
 		this.is_official = is_official;
 	}
 
-	
-	public String getMadeByUser() {
-		return madeByUser;
-	}
-
-	public void setMadeByUser(String madeByUser) {
-		this.madeByUser = madeByUser;
-	}
-
-	@Override
-	public String toString() {
-		return "Spot [id=" + id + ", spotname=" + spotname + ", is_equipped=" + is_equipped + ", is_official="
-				+ is_official + ", madeByUser=" + madeByUser + "]";
-	}
-
-
-	
-	
 	
 }

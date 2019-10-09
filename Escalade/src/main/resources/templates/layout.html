@@ -26,9 +26,9 @@
 				<a class="nav-item nav-link" th:href="@{/listespot}">Parcourir la liste des spots d'escalade</a>
 				<a class="nav-item nav-link" th:href="@{/createspot}">Ajouter un spot d'escalade</a>
 				<a class="nav-item nav-link" th:href="@{/signup}">Creer un compte</a>
-				<a th:if="${userName == null}" class="nav-item nav-link" th:href="@{/login}">Se connecter</a>
-				<a th:if="${userName != null}" class="nav-item nav-link" th:href="@{/logout}">Se deconnecter</a>
-				<a th:if="${userName != null}" class="nav-item nav-link" th:text="${userName}"></a>
+				<a th:if="${userEmail == null}" class="nav-item nav-link" th:href="@{/login}">Se connecter</a>
+				<a th:if="${userEmail != null}" class="nav-item nav-link" th:href="@{/logout}">Se deconnecter</a>
+				<a th:if="${userEmail != null}" class="nav-item nav-link" th:text="${userEmail}"></a>
 			</div>
 		</div>
 	</nav>

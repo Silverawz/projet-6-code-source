@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,7 +16,7 @@ import com.deroussen.entities.User;
 import com.deroussen.service.UserService;
 
 @Controller
-@SessionAttributes("userName")
+@SessionAttributes("userEmail")
 public class UserController {
 	
 	@Autowired
@@ -36,7 +35,6 @@ public class UserController {
 		User user = new User();
 		model.addObject("user",  user);
 		model.setViewName("user/signup");
-		
 		return model;
 	}
 	
@@ -65,7 +63,7 @@ public class UserController {
 		ModelAndView model = new ModelAndView();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		User user = userService.findUserByEmail(auth.getName());	
-		model.addObject("userName", user.getFirstname());
+		model.addObject("userEmail", user.getEmail());
 		model.setViewName("home/home");
 		return model;
 	}

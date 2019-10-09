@@ -1,5 +1,6 @@
 package com.deroussen.entities;
 
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -40,9 +41,32 @@ public class User {
 	@JoinTable(name="user_role", joinColumns=@JoinColumn(name="user_id"), inverseJoinColumns=@JoinColumn(name="role_id"))
 	private Set<Role> roles;
 
-	@OneToMany(cascade=CascadeType.ALL)
-	private Set<Spot> spots;
+	@OneToMany(mappedBy="user")
+	private List <Spot> spots;
 		
+
+	public User() {
+		super();
+	}
+	
+	public User(String email) {
+		super();
+		this.email = email;
+	}
+	
+	public User(Long id, String email, String firstname, String lastname, String password, int active, Set<Role> roles,
+			List<Spot> spots) {
+		super();
+		this.id = id;
+		this.email = email;
+		this.firstname = firstname;
+		this.lastname = lastname;
+		this.password = password;
+		this.active = active;
+		this.roles = roles;
+		this.spots = spots;
+	}
+
 	public Long getId() {
 		return id;
 	}

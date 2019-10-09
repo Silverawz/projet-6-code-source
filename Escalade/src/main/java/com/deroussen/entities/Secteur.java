@@ -1,10 +1,16 @@
 package com.deroussen.entities;
 
+
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -17,8 +23,15 @@ public class Secteur {
 	@Column(name="secteurname")
 	private String secteurname;
 
-	@Column(name="spotname")
-	private String spotname;
+	@ManyToOne
+	private Spot spot;
+	
+	@OneToMany(mappedBy="secteur", cascade = CascadeType.REMOVE)
+	private List <Voie> voies;
+	
+	public Secteur() {
+		
+	}
 	
 	public Secteur(Long id, String secteurname) {
 		super();
@@ -26,10 +39,31 @@ public class Secteur {
 		this.secteurname = secteurname;
 	}
 
-	public Secteur() {
-		
+
+	public Secteur(Long id, String secteurname, Spot spot) {
+		super();
+		this.id = id;
+		this.secteurname = secteurname;
+		this.spot = spot;
 	}
+
 	
+	public List<Voie> getVoies() {
+		return voies;
+	}
+
+	public void setVoies(List<Voie> voies) {
+		this.voies = voies;
+	}
+
+	public Spot getSpot() {
+		return spot;
+	}
+
+	public void setSpot(Spot spot) {
+		this.spot = spot;
+	}
+
 	public Long getId() {
 		return id;
 	}
@@ -46,22 +80,6 @@ public class Secteur {
 		this.secteurname = secteurname;
 	}
 
-	public String getSpotname() {
-		return spotname;
-	}
 
-	public void setSpotname(String spotname) {
-		this.spotname = spotname;
-	}
-
-	@Override
-	public String toString() {
-		return "Secteur [id=" + id + ", secteurname=" + secteurname + ", spotname=" + spotname + "]";
-	}
-
-	
-
-	
-	
 	
 }
