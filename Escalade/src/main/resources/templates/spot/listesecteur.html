@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="utf-8">
+<title>Liste des spots d'escalade</title>
+</head>
+<body>
+	<div layout:fragment="content">	
+			<div class="container">
+				<div class="panel panel-primary">
+							<div class="panel-body">
+								<form th:action="@{/index}" method="get">
+									<label>Mot clé :</label> <input type="text" name="motCle" th:value="${motCle}">
+									<button type="submit" class="btn btn-primary">Chercher</button>
+								</form>
+							</div>
+							
+						 <h4>Nom du spot :</h4>
+						<div th:text="${spotname}"></div>
+					
+						<div class="panel-heading">Liste des secteurs</div>
+					<div class="panel-body">
+						<table class="table">
+							<tr>
+								<th>ID du secteur</th>
+								<th>Nom du secteur</th>
+							</tr>
+							<tr th:each="s:${secteurlist}">
+							
+								<td th:text=${s.id}></td>
+								<td th:text=${s.secteurname}></td>
+								<td><a th:href="@{/listesecteur(secteurname=${s.secteurname}, user=${useremail})}">Voir le(s) voie(s) de ce secteur</a>
+								</td>
+								<td>
+								<a th:href="@{/createsecteur(secteurname=${s.secteurname}, user=${useremail})}">Ajouter ou modifier le secteur</a>
+								</td>
+								<td>
+								<a onclick="return confirm('Etes vous sur?')" th:href="@{/delete(id=${s.id}, page=${currentPage}, motCle=${motCle})}">Supprimer le secteur</a>
+								</td>
+								
+							</tr>
+						</table>
+	
+						<ul class="nav nav-pills">
+							<li th:class="${currentPage==status.index}?'active':''"
+								th:each="page,status:${pages}"><a
+								onclick="return confirm(Etes vous sur ?'')"
+								th:href="@{/listespot(page=${status.index}, motCle=${motCle})}"
+								th:text="${status.index}"></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--  
+		<div th:if="{1 == 0}" th:text=${spotname}></div>
+		<div th:if="{1 == 0}" th:text=${userEmail}></div>
+		-->
+</body>
+</html>

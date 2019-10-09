@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="utf-8">
+<title>Formulaire d'enregistrement d'une voie</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div th:if="${userEmail != null}">
+			<div th:if="${userEmail} == ${madeByUser}">
+				<div class="col-md-6">			
+					<form th:action="@{/createvoie}" method="post">
+					
+							<div class="form-group">
+								<label class="control-label">Crée par :</label> 
+								<input class="form-control" type="text" name="madeByUser" th:value="${madeByUser}" readonly="readonly" />		
+							</div>		
+										
+							<div class="form-group">
+								<label class="control-label">Id du spot :</label> 
+								<input class="form-control" type="text" name="spotID" th:value="${spotID}" readonly="readonly" />		
+							</div>	
+							
+							<div class="form-group">
+								<label class="control-label">Nom du spot :</label> 
+								<input class="form-control" type="text" name="spotname" th:value="${spotname}" readonly="readonly" />		
+							</div>
+												
+							<div class="form-group">
+								<label class="control-label">Est équipé :</label> 
+								<input class="form-control" type="text" name="Is_equipped" th:value="${Is_equipped}" readonly="readonly" />		
+							</div>
+							
+							<div class="form-group">
+								<label class="control-label">Est officiel :</label> 
+								<input class="form-control" type="text" name="Is_official" th:value="${Is_official}" readonly="readonly" />		
+							</div>
+							
+							<div class="form-group">
+								<label class="control-label">Id du secteur :</label> 
+								<input class="form-control" type="text" name="secteurID" th:value="${secteurID}" readonly="readonly" />
+							</div>
+							
+							<div class="form-group">
+								<label class="control-label">Nom du secteur :</label> 
+								<input class="form-control" type="text" name="secteurname" th:value="${secteurname}" readonly="readonly" />
+							</div>
+							
+							
+							<div class="form-group">
+								<label class="control-label">Nom de la voie :</label> 
+								<input class="form-control" type="text" name="voiename" th:value="${voiename}">
+							</div>
+							<div class="form-group">
+								<label class="control-label">Cotation de la voie :</label> 
+								<input class="form-control" type="text" name="voiecotation" th:value="${voiecotation}">
+							</div>
+												
+								<button type="submit" class="btn btn-primary">Enregistrer</button>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+</body>
+</html>
