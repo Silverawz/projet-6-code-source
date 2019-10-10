@@ -19,10 +19,10 @@ public interface SecteurRepository extends JpaRepository <Secteur, Long>{
 	Secteur findByid(Long id);
 	
 	Page <Secteur> findBySecteurnameContains(String mc, Pageable page);
-
 	
 	@Query("from Secteur where spot_id=?1")
 	List<Secteur> findBySpotId(Long id);
+	
 	
 	/*
 	@Query(value="SELECT * FROM SECTEUR WHERE SPOT_ID = ?")

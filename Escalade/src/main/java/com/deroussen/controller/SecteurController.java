@@ -3,6 +3,7 @@ package com.deroussen.controller;
 
 import java.util.List;
 
+
 import javax.validation.Valid;
 
 
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -39,33 +41,33 @@ public class SecteurController {
 	
 	@RequestMapping(value={"/createsecteur"}, method=RequestMethod.GET)
 	public ModelAndView formGet(
-			@RequestParam(name="spotID") Long spotID,
+			@RequestParam(name="spotId") Long spotId,
 			@RequestParam(name="spotname") String spotname,
 			@RequestParam(name="madeByUser") String madeByUser,
-			@RequestParam(name="Is_equipped") boolean Is_equipped,
-			@RequestParam(name="Is_official") boolean Is_official
+			@RequestParam(name="is_equipped") boolean is_equipped,
+			@RequestParam(name="is_official") boolean is_official
 			) {
 		ModelAndView modelView = new ModelAndView();
-		modelView.addObject("spotID", spotID);
+		modelView.addObject("spotId", spotId);
 		modelView.addObject("spotname", spotname);
 		modelView.addObject("madeByUser", madeByUser);
-		modelView.addObject("Is_equipped", Is_equipped);
-		modelView.addObject("Is_official", Is_official);
+		modelView.addObject("is_equipped", is_equipped);
+		modelView.addObject("is_official", is_official);
 		modelView.setViewName("spot/createsecteur");
 		return modelView;
 	}
 	
 	@RequestMapping(value={"/createsecteur"}, method=RequestMethod.POST)
 	public ModelAndView formPost(@Valid Secteur secteur, BindingResult bindingResult,
-			@RequestParam(name="spotID") Long spotID,
+			@RequestParam(name="spotId") Long spotId,
 			@RequestParam(name="spotname") String spotname,
 			@RequestParam(name="madeByUser") String madeByUser,
-			@RequestParam(name="Is_equipped") boolean Is_equipped,
-			@RequestParam(name="Is_official") boolean Is_official,
+			@RequestParam(name="is_equipped") boolean is_equipped,
+			@RequestParam(name="is_official") boolean is_official,
 			@RequestParam(name="secteurname") String secteurname
 			) {
 		ModelAndView modelView = new ModelAndView();	
-		List <Secteur> secteurs = secteurService.findBySpotId(spotID);
+		List <Secteur> secteurs = secteurService.findBySpotId(spotId);
 		int sizeList = secteurs.size();
 		int matchesWithSizeList = 0;
 		C:for(int i = 0; i < secteurs.size(); i++) {
@@ -76,40 +78,107 @@ public class SecteurController {
 			}
 		}
 		if(bindingResult.hasErrors()) {
-			modelView.setViewName("redirect:/createsecteur?spotname="+spotname+"&spotID="+spotID+"&madeByUser="+madeByUser+"&Is_equipped="+Is_equipped+"&Is_official="+Is_official);
+			modelView.setViewName("redirect:/createsecteur?spotname="+spotname+"&spotId="+spotId+"&madeByUser="+madeByUser+"&is_equipped="+is_equipped+"&is_official="+is_official);
 		}
 		if (sizeList == matchesWithSizeList) {	
-			secteur.setSpot(spotService.findById(spotID));	
+			secteur.setSpot(spotService.findById(spotId));	
 			secteurService.saveSecteur(secteur);
-			modelView.setViewName("redirect:/createvoie?spotname="+spotname+"&spotID="+spotID+"&madeByUser="+madeByUser+"&Is_equipped="+Is_equipped+"&Is_official="+Is_official
-					+"&secteurname="+secteurname+"&secteurID="+secteur.getId());
+			modelView.setViewName("redirect:/createvoie?spotname="+spotname+"&spotId="+spotId+"&madeByUser="+madeByUser+"&is_equipped="+is_equipped+"&is_official="+is_official
+					+"&secteurname="+secteurname+"&secteurId="+secteur.getId());
 		}		
 		return modelView;
 	}
 	
+	//Liste des secteurs avec parametres (arrive avec un spot conservé)
 	@RequestMapping(value={"/listesecteur"}, method=RequestMethod.GET)
-	public ModelAndView listeSpot(Model model,
+	public ModelAndView listeSecteur(
 			@RequestParam(name="spotname") String spotname,
+			@RequestParam(name="spotId") Long spotId,
 			@RequestParam(name="user") String userThatCreateTheSpot,
 			@RequestParam(name="page", defaultValue= "0") int page,
 			@RequestParam(name="motCle", defaultValue= "") String mc) {
 		ModelAndView modelView = new ModelAndView();
-		Page <Secteur> secteurs = secteurRepository.findBySecteurnameContains(mc, PageRequest.of(page, 10));
-		model.addAttribute("secteurlist", secteurs.getContent());
-		model.addAttribute("pages",new int[secteurs.getTotalPages()]);
-		model.addAttribute("currentPage",page);
-		model.addAttribute("motCle", mc);
-		model.addAttribute("spotname", spotname);
-		model.addAttribute("userThatCreateTheSpot", userThatCreateTheSpot);
-		modelView.addObject(model);
+		/*
+		Page <Secteur> secteursWithSpotId = new PageImpl<>(secteurRepository.findBySpotId(spotId));	
+		Page<Secteur> secteurs = secteurRepository.findBySecteurnameContains(mc, PageRequest.of(page, 10));
+		*/
+		Page <Secteur> secteurs = secteurService.findBySecteurnameContainsFromSpotId(spotId, mc, PageRequest.of(page, 10));
+		
+		modelView.addObject("secteurlist", secteurs.getContent());
+		modelView.addObject("pages",new int[secteurs.getTotalPages()]);
+		modelView.addObject("currentPage",page);
+		modelView.addObject("spotId", spotId);
+		modelView.addObject("motCle", mc);
+		modelView.addObject("spotname", spotname);
+		modelView.addObject("userThatCreateTheSpot", userThatCreateTheSpot);
 		modelView.setViewName("/spot/listesecteur");
 		return modelView;
 	}
 	
+	//Liste de tout les secteurs (seuls paramètres = page et motclef)
+	@RequestMapping(value={"/listesecteurs"}, method=RequestMethod.GET)
+	public ModelAndView listeSecteurNoParam(@RequestParam(name="page", defaultValue= "0") int page,
+			@RequestParam(name="motCle", defaultValue= "") String mc) {
+		ModelAndView modelView = new ModelAndView();
+		Page<Secteur> secteurs = secteurRepository.findBySecteurnameContains(mc, PageRequest.of(page, 10));
+		modelView.addObject("secteurlist", secteurs.getContent());
+		modelView.addObject("pages",new int[secteurs.getTotalPages()]);
+		modelView.addObject("currentPage",page);
+		modelView.setViewName("/spot/listesecteur");
+		return modelView;
+	}
+	
+	
 	@GetMapping("/deletesecteur")
-	public String delete(Long id, String motCle, int page) {
-		secteurRepository.deleteById(id);
-		return "redirect:/listesecteur?page="+page+"&motCle="+motCle;
+	public ModelAndView delete(String motCle, int page,
+			@RequestParam(name="id") Long id,
+			@RequestParam(name="spotId") Long spotId,
+			@SessionAttribute("userEmail") String userEmail
+			) {
+		ModelAndView modelView = new ModelAndView();
+		if(spotService.findById(spotId).getUser().getEmail().equals(userEmail)) {
+			secteurRepository.deleteById(id);	
+			modelView.setViewName("redirect:/listesecteur?page="+page+"&motCle="+motCle);
+		}
+		else {
+			modelView.setViewName("errors/access_denied");
+		}
+		return modelView;
+	}
+	
+	@RequestMapping(value={"/changesecteur"}, method=RequestMethod.GET)
+	public ModelAndView changeSecteurGet(@RequestParam(name="spotId") Long spotId,
+			@RequestParam(name="spotname") String spotname,
+			@RequestParam(name="secteurId") Long secteurId,
+			@RequestParam(name="secteurname") String secteurname,
+			@SessionAttribute("userEmail") String userEmail
+			) {
+		ModelAndView modelView = new ModelAndView();
+		if(spotService.findById(spotId).getUser().getEmail().equals(userEmail)) {
+			modelView.addObject("spotname", spotname);
+			modelView.addObject("secteurname", secteurname);
+			modelView.addObject("secteurId", secteurId);
+			modelView.addObject("spotId", spotId);
+			modelView.setViewName("spot/changesecteur");
+		}
+		else {
+			modelView.setViewName("errors/access_denied");
+		}
+		return modelView;
+	}
+	
+	@RequestMapping(value={"/changesecteur"}, method=RequestMethod.POST)
+	public ModelAndView changeSecteurPost(@RequestParam(name="spotname") String spotname,
+			@RequestParam(name="spotId") Long spotId,
+			@RequestParam(name="secteurId") Long secteurId,
+			@RequestParam(name="secteurname") String secteurname
+			) {
+		ModelAndView modelView = new ModelAndView();
+		Secteur secteurUpdate = secteurRepository.getOne(secteurId);
+		secteurUpdate.setSecteurname(secteurname);
+		secteurRepository.save(secteurUpdate);
+		modelView.setViewName("spot/listespot");
+		return modelView;
 	}
 	
 }

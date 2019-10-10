@@ -29,27 +29,27 @@ public class LongueurController {
 	
 	@RequestMapping(value={"/createlongueur"}, method=RequestMethod.GET)
 	public ModelAndView formGet(Model model, 
-			@RequestParam(name="spotID") Long spotID,
+			@RequestParam(name="spotId") Long spotId,
 			@RequestParam(name="spotname") String spotname,
 			@RequestParam(name="madeByUser") String madeByUser,
-			@RequestParam(name="Is_equipped") boolean Is_equipped,
-			@RequestParam(name="Is_official") boolean Is_official,
+			@RequestParam(name="is_equipped") boolean is_equipped,
+			@RequestParam(name="is_official") boolean is_official,
 			@RequestParam(name="secteurname") String secteurname,
-			@RequestParam(name="secteurID") Long secteurID,
+			@RequestParam(name="secteurId") Long secteurId,
 			@RequestParam(name="voiename") String voiename,
-			@RequestParam(name="voieID") Long voieID,
+			@RequestParam(name="voieId") Long voieId,
 			@RequestParam(name="voiecotation") String voiecotation
 			) {
 		ModelAndView modelView = new ModelAndView();
-		modelView.addObject("spotID", spotID);
+		modelView.addObject("spotId", spotId);
 		modelView.addObject("spotname", spotname);
 		modelView.addObject("madeByUser", madeByUser);
-		modelView.addObject("Is_equipped", Is_equipped);
-		modelView.addObject("Is_official", Is_official);
+		modelView.addObject("is_equipped", is_equipped);
+		modelView.addObject("is_official", is_official);
 		modelView.addObject("secteurname", secteurname);
-		modelView.addObject("secteurID", secteurID);
+		modelView.addObject("secteurId", secteurId);
 		modelView.addObject("voiename", voiename);
-		modelView.addObject("voieID", voieID);
+		modelView.addObject("voieId", voieId);
 		modelView.addObject("voiecotation", voiecotation);
 		modelView.setViewName("spot/createlongueur");
 		return modelView;
@@ -57,20 +57,20 @@ public class LongueurController {
 	
 	@RequestMapping(value={"/createlongueur"}, method=RequestMethod.POST)
 	public ModelAndView formPost(@Valid Longueur longueur, BindingResult bindingResult, 
-			@RequestParam(name="spotID") Long spotID,
+			@RequestParam(name="spotId") Long spotId,
 			@RequestParam(name="spotname") String spotname,
 			@RequestParam(name="madeByUser") String madeByUser,
-			@RequestParam(name="Is_equipped") boolean Is_equipped,
-			@RequestParam(name="Is_official") boolean Is_official,
+			@RequestParam(name="is_equipped") boolean is_equipped,
+			@RequestParam(name="is_official") boolean is_official,
 			@RequestParam(name="secteurname") String secteurname,
-			@RequestParam(name="secteurID") Long secteurID,
+			@RequestParam(name="secteurId") Long secteurId,
 			@RequestParam(name="voiename") String voiename,
-			@RequestParam(name="voieID") Long voieID,
+			@RequestParam(name="voieId") Long voieId,
 			@RequestParam(name="voiecotation") String voiecotation,
 			@RequestParam(name="longueurname") String longueurname,
 			@RequestParam(name="longueurcotation") String longueurcotation) {
 		ModelAndView modelView = new ModelAndView();
-		List <Longueur> longueurs = longueurService.findByVoieId(voieID);
+		List <Longueur> longueurs = longueurService.findByVoieId(voieId);
 		int sizeList = longueurs.size();
 		int matchesWithSizeList = 0;
 		C:for(int i = 0; i < longueurs.size(); i++) {
@@ -81,11 +81,11 @@ public class LongueurController {
 			}
 		}
 		if(bindingResult.hasErrors()) {
-			modelView.setViewName("redirect:/createlongueur?spotname="+spotname+"&spotID="+spotID+"&madeByUser="+madeByUser+"&Is_equipped="+Is_equipped+"&Is_official="+Is_official
-					+"&secteurname="+secteurname+"&secteurID="+secteurID+"&voiename="+voiename+"&voieID="+voieID+"&voiecotation="+voiecotation);
+			modelView.setViewName("redirect:/createlongueur?spotname="+spotname+"&spotId="+spotId+"&madeByUser="+madeByUser+"&is_equipped="+is_equipped+"&is_official="+is_official
+					+"&secteurname="+secteurname+"&secteurId="+secteurId+"&voiename="+voiename+"&voieId="+voieId+"&voiecotation="+voiecotation);
 		}
 		if (sizeList == matchesWithSizeList) {
-			longueur.setVoie(voieService.findById(voieID));	
+			longueur.setVoie(voieService.findById(voieId));	
 			longueurService.saveLongueur(longueur);
 			modelView.setViewName("redirect:/listespot");
 		}		

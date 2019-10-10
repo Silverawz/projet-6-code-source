@@ -2,10 +2,14 @@ package com.deroussen.service;
 
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.deroussen.dao.SecteurRepository;
@@ -45,6 +49,27 @@ public class SecteurServiceImpl implements SecteurService {
 	public Secteur findById(Long id) {
 		return secteurRepository.findByid(id);
 	}
+
+
+
+	@Override
+	public Page<Secteur> findBySecteurnameContainsFromSpotId(Long id, String mc, Pageable page) {
+		List <Secteur> secteursWithSpotId = secteurRepository.findBySpotId(id);
+		List <Secteur> secteursThatMatchesWithResearch = new ArrayList<>();
+		for (Secteur secteur : secteursWithSpotId) {
+			if(secteur.getSecteurname().contains(mc)) {
+				secteursThatMatchesWithResearch.add(secteur);
+			}	
+		}
+		Page <Secteur> secteursPageList = new PageImpl<>(secteursThatMatchesWithResearch);
+		return secteursPageList;
+	}
+
+
+
+
+
+
 
 
 

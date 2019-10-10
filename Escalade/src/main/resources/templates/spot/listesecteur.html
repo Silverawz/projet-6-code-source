@@ -18,9 +18,11 @@
 								</form>
 							</div>
 							
-						 <h4>Nom du spot :</h4>
+						<h4>Nom du spot :</h4>
 						<div th:text="${spotname}"></div>
-					
+						<h4>ID du spot :</h4>
+						<div th:text="${spotId}"></div>
+						
 						<div class="panel-heading">Liste des secteurs</div>
 					<div class="panel-body">
 						<table class="table">
@@ -32,13 +34,21 @@
 							
 								<td th:text=${s.id}></td>
 								<td th:text=${s.secteurname}></td>
-								<td><a th:href="@{/listesecteur(secteurname=${s.secteurname}, user=${useremail})}">Voir le(s) voie(s) de ce secteur</a>
+								<td><a th:href="@{/listevoie(spotId=${spotId}, spotname=${spotname}, secteurname=${s.secteurname}, secteurId=${s.id}, 
+								userThatCreateTheSpot=${userThatCreateTheSpot})}">Voir le(s) voie(s) de ce secteur</a>
 								</td>
-								<td>
-								<a th:href="@{/createsecteur(secteurname=${s.secteurname}, user=${useremail})}">Ajouter ou modifier le secteur</a>
+								<td th:if="${userEmail == userThatCreateTheSpot}">
+								<a th:href="@{/createvoie(spotId=${spotId}, spotname=${spotname}, secteurname=${s.secteurname}, secteurId=${s.id}, 
+								is_official=${s.spot.isIs_official()}, is_equipped=${s.spot.isIs_equipped()}, madeByUser=${userThatCreateTheSpot})}">
+								Ajouter une voie</a>
 								</td>
-								<td>
-								<a onclick="return confirm('Etes vous sur?')" th:href="@{/delete(id=${s.id}, page=${currentPage}, motCle=${motCle})}">Supprimer le secteur</a>
+								<td th:if="${userEmail == userThatCreateTheSpot}">
+								<a th:href="@{/changesecteur(spotId=${spotId}, spotname=${spotname}, secteurname=${s.secteurname}, secteurId=${s.id})}">
+								Modifier le secteur</a>
+								</td>
+								<td th:if="${userEmail == userThatCreateTheSpot}">
+								<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletesecteur(spotId=${spotId}, id=${s.id}, page=${currentPage}, motCle=${motCle})}">
+								Supprimer le secteur</a>
 								</td>
 								
 							</tr>
@@ -55,9 +65,5 @@
 				</div>
 			</div>
 		</div>
-		<!--  
-		<div th:if="{1 == 0}" th:text=${spotname}></div>
-		<div th:if="{1 == 0}" th:text=${userEmail}></div>
-		-->
 </body>
 </html>

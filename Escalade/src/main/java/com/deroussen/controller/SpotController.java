@@ -38,22 +38,22 @@ public class SpotController {
 	
 	@RequestMapping(value={"/createspot"}, method=RequestMethod.GET)
 	public ModelAndView formGet() {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("spot/createspot");
-		return model;
+		ModelAndView modelView = new ModelAndView();
+		modelView.setViewName("spot/createspot");
+		return modelView;
 	}
 	
 	@RequestMapping(value={"/createspot"}, method=RequestMethod.POST)
 	public ModelAndView formPost(@Valid Spot spot, BindingResult bindingResult,
 			@SessionAttribute("userEmail") String userEmail, 
 			@RequestParam(name="is_equipped") String is_equipped) {
-		ModelAndView model = new ModelAndView();
+		ModelAndView modelView = new ModelAndView();
 		Spot spotExists = spotService.findSpotByName(spot.getSpotname());
 		if(spotExists != null) {
 			bindingResult.rejectValue("spotname","This spotname already exists!"); //  TODO
 		}
 		if(bindingResult.hasErrors()) {
-			model.setViewName("/spot/createspot"); 
+			modelView.setViewName("/spot/createspot"); 
 		}
 		if(spotExists == null) {
 			if(is_equipped.equals("oui")) {
@@ -65,22 +65,21 @@ public class SpotController {
 			spot.setUser(userService.findUserByEmail(userEmail));
 			spotService.saveSpot(spot);
 			// model.addObject("msg","The spot has been created successfully!"); // TODO
-			model.setViewName("redirect:/createsecteur?spotname="+spot.getSpotname()+"&spotID="+spot.getId()+"&madeByUser="+userEmail+"&Is_equipped="+spot.isIs_equipped()+"&Is_official=false");
+			modelView.setViewName("redirect:/createsecteur?spotname="+spot.getSpotname()+"&spotId="+spot.getId()+"&madeByUser="+userEmail+"&is_equipped="+spot.isIs_equipped()+"&is_official=false");
 		}	
-		return model;
+		return modelView;
 	}
 	
 	@RequestMapping(value={"/listespot"}, method=RequestMethod.GET)
-	public ModelAndView listeSpot(Model model, 
+	public ModelAndView listeSpot(
 			@RequestParam(name="page", defaultValue= "0") int page,
 			@RequestParam(name="motCle", defaultValue= "") String mc) {
 		ModelAndView modelView = new ModelAndView();
 		Page <Spot> spots = spotRepository.findBySpotnameContains(mc, PageRequest.of(page, 10));
-		model.addAttribute("spotlist", spots.getContent());
-		model.addAttribute("pages",new int[spots.getTotalPages()]);
-		model.addAttribute("currentPage",page);
-		model.addAttribute("motCle", mc);
-		modelView.addObject(model);
+		modelView.addObject("spotlist", spots.getContent());
+		modelView.addObject("pages",new int[spots.getTotalPages()]);
+		modelView.addObject("currentPage",page);
+		modelView.addObject("motCle", mc);
 		modelView.setViewName("/spot/listespot");
 		return modelView;
 	}
@@ -97,14 +96,17 @@ public class SpotController {
 		return modelView;
 	}
 	
-	/////// to do
+	
 	@RequestMapping(value={"/changespot"}, method=RequestMethod.POST)
 	public ModelAndView changeSpotPost(@Valid Spot spot, BindingResult bindingResult,
+			@RequestParam(name="spotId") Long spotId,
+			@RequestParam(name="spotname") String spotname,
 			@RequestParam(name="is_equipped") String is_equipped,
-			@RequestParam(name="is_official") String is_official) {
+			@RequestParam(name="is_official") String is_official
+			) {
 		ModelAndView modelView = new ModelAndView();
-		Spot spotUpdate = spotRepository.getOne(spot.getId());
-		spotUpdate.setSpotname(spot.getSpotname());
+		Spot spotUpdate = spotRepository.getOne(spotId);
+		spotUpdate.setSpotname(spotname);
 		if(is_equipped.equals("oui")) {
 			spotUpdate.setIs_equipped(true);
 		}
@@ -117,14 +119,13 @@ public class SpotController {
 		else {
 			spotUpdate.setIs_official(false);
 		}
-		spotUpdate.setId(spot.getId());
 		spotRepository.save(spotUpdate);
 		modelView.setViewName("spot/listespot");
 		return modelView;
 	}
 	
 	
-	@RequestMapping(value={"/delete"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/deletespot"}, method=RequestMethod.GET)
 	public String delete(Long id, String motCle, int page) {
 		spotRepository.deleteById(id);
 		return "redirect:/listespot?page="+page+"&motCle="+motCle;
