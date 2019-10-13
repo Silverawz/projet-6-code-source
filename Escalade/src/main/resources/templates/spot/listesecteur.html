@@ -19,9 +19,9 @@
 							</div>
 							
 						<h4>Nom du spot :</h4>
-						<div th:text="${spotname}"></div>
+						<div th:text="${spot_name}"></div>
 						<h4>ID du spot :</h4>
-						<div th:text="${spotId}"></div>
+						<div th:text="${spot_id}"></div>
 						
 						<div class="panel-heading">Liste des secteurs</div>
 					<div class="panel-body">
@@ -32,22 +32,21 @@
 							</tr>
 							<tr th:each="s:${secteurlist}">
 							
-								<td th:text=${s.id}></td>
-								<td th:text=${s.secteurname}></td>
-								<td><a th:href="@{/listevoie(spotId=${spotId}, spotname=${spotname}, secteurname=${s.secteurname}, secteurId=${s.id}, 
-								userThatCreateTheSpot=${userThatCreateTheSpot})}">Voir le(s) voie(s) de ce secteur</a>
+								<td th:text=${s.secteur_id}></td>
+								<td th:text=${s.secteur_name}></td>
+								<td><a th:href="@{/listevoie(id=${s.secteur_id})}">
+								Voir le(s) voie(s) de ce secteur</a>
 								</td>
 								<td th:if="${userEmail == userThatCreateTheSpot}">
-								<a th:href="@{/createvoie(spotId=${spotId}, spotname=${spotname}, secteurname=${s.secteurname}, secteurId=${s.id}, 
-								is_official=${s.spot.isIs_official()}, is_equipped=${s.spot.isIs_equipped()}, madeByUser=${userThatCreateTheSpot})}">
+								<a th:href="@{/createvoie(id=${s.secteur_id})}">
 								Ajouter une voie</a>
 								</td>
 								<td th:if="${userEmail == userThatCreateTheSpot}">
-								<a th:href="@{/changesecteur(spotId=${spotId}, spotname=${spotname}, secteurname=${s.secteurname}, secteurId=${s.id})}">
+								<a th:href="@{/changesecteur(id=${s.secteur_id})}">
 								Modifier le secteur</a>
 								</td>
 								<td th:if="${userEmail == userThatCreateTheSpot}">
-								<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletesecteur(spotId=${spotId}, id=${s.id}, page=${currentPage}, motCle=${motCle})}">
+								<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletesecteur(id=${s.secteur_id}, page=${currentPage}, motCle=${motCle})}">
 								Supprimer le secteur</a>
 								</td>
 								

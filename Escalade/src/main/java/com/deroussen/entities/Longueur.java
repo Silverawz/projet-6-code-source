@@ -12,14 +12,14 @@ import javax.persistence.Table;
 @Table(name="longueur")
 public class Longueur {
 	
-	@Id @GeneratedValue(strategy= GenerationType.AUTO)
-	private Long id;
+	@Id @GeneratedValue(strategy= GenerationType.IDENTITY)
+	private Long longueur_id;
 	
-	@Column(name="longueurname")
-	private String longueurname;
+	@Column(name="longueur_name")
+	private String longueur_name;
 
-	@Column(name="longueurcotation")
-	private String longueurcotation;
+	@Column(name="longueur_cotation")
+	private String longueur_cotation;
 	
 	@ManyToOne
 	private Voie voie;
@@ -28,19 +28,10 @@ public class Longueur {
 		
 	}
 
-	public Longueur(Long id, String longueurname, String longueurcotation, Voie voie) {
+	public Longueur(String longueur_name, String longueur_cotation) {
 		super();
-		this.id = id;
-		this.longueurname = longueurname;
-		this.longueurcotation = longueurcotation;
-		this.voie = voie;
-	}
-
-	public Longueur(Long id, String longueurname, String longueurcotation) {
-		super();
-		this.id = id;
-		this.longueurname = longueurname;
-		this.longueurcotation = longueurcotation;
+		this.longueur_name = longueur_name;
+		this.longueur_cotation = longueur_cotation;
 	}
 
 	public Voie getVoie() {
@@ -51,29 +42,31 @@ public class Longueur {
 		this.voie = voie;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getLongueur_id() {
+		return longueur_id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setLongueur_id(Long longueur_id) {
+		this.longueur_id = longueur_id;
 	}
 
-	public String getLongueurname() {
-		return longueurname;
+	public String getLongueur_name() {
+		return longueur_name;
 	}
 
-	public void setLongueurname(String longueurname) {
-		this.longueurname = longueurname;
+	public void setLongueur_name(String longueur_name) {
+		this.longueur_name = longueur_name;
 	}
 
-	public String getLongueurcotation() {
-		return longueurcotation;
+	public String getLongueur_cotation() {
+		return longueur_cotation;
 	}
 
-	public void setLongueurcotation(String longueurcotation) {
-		this.longueurcotation = longueurcotation;
+	public void setLongueur_cotation(String longueur_cotation) {
+		this.longueur_cotation = longueur_cotation;
 	}
+
+
 	
 	
 

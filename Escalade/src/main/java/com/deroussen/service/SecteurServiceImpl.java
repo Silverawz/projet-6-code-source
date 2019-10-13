@@ -3,8 +3,8 @@ package com.deroussen.service;
 
 
 import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -32,8 +32,11 @@ public class SecteurServiceImpl implements SecteurService {
 
 	@Override
 	public Secteur findBySecteurname(String name) {
-		return secteurRepository.findBySecteurname(name);
+		return secteurRepository.findBySecteur_name(name);
 	}
+
+
+
 
 
 
@@ -57,13 +60,23 @@ public class SecteurServiceImpl implements SecteurService {
 		List <Secteur> secteursWithSpotId = secteurRepository.findBySpotId(id);
 		List <Secteur> secteursThatMatchesWithResearch = new ArrayList<>();
 		for (Secteur secteur : secteursWithSpotId) {
-			if(secteur.getSecteurname().contains(mc)) {
+			if(secteur.getSecteur_name().contains(mc)) {
 				secteursThatMatchesWithResearch.add(secteur);
 			}	
 		}
 		Page <Secteur> secteursPageList = new PageImpl<>(secteursThatMatchesWithResearch);
 		return secteursPageList;
 	}
+
+
+
+
+
+
+
+	
+
+
 
 
 

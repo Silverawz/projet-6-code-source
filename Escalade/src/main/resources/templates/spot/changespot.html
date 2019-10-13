@@ -15,27 +15,27 @@
 										
 						<div class="form-group">
 							<label class="control-label">ID du spot :       </label> 
-								<input class="form-control" type="text" name="spotId" th:value="${spotId}" readonly="readonly"/>
+								<input class="form-control" type="text" name="spot_id" th:value="${spot_id}" readonly="readonly"/>
 						</div>
 																									
 						<div class="form-group">
 							<label class="control-label">Nom du spot :       </label> 
-								<input class="form-control" type="text" name="spotname" th:value="${spotname}">
+								<input class="form-control" type="text" name="spot_name" th:value="${spot_name}">
 						</div>
 						
 						<div class="form-group">
 							<label for="control-label">Le spot est t'il équipé ?</label>
 								<select name="is_equipped" id="is_equipped">
-									<option selected="selected">oui</option>
-									<option value="non">non</option>
+									<option selected="selected" value="true">oui</option>
+									<option value="false">non</option>
 								</select>
 						</div>		
 						<!--  A mettre pour MEMBER only -->
 						<div class="form-group">
 							<label for="control-label">Le spot est t'il officiel ?</label>
 								<select name="is_official" id="is_official">
-									<option selected="selected">non</option>
-									<option value="oui">oui</option>
+									<option selected="selected" value="false">non</option>
+									<option value="true">oui</option>
 								</select>
 						</div>	
 											

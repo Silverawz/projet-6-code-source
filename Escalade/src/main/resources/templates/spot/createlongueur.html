@@ -10,7 +10,7 @@
 <body>
 	<div layout:fragment="content">
 		<div th:if="${userEmail != null}">
-			<div th:if="${userEmail} == ${madeByUser}">
+			<!--  <div th:if="${userEmail} == ${madeByUser}"> -->
 				<div class="col-md-6">			
 					<form th:action="@{/createlongueur}" method="post">
 					
@@ -21,12 +21,12 @@
 							
 							<div class="form-group">
 								<label class="control-label">Id du spot :</label> 
-								<input class="form-control" type="text" name="spotId" th:value="${spotId}" readonly="readonly" />		
+								<input class="form-control" type="text" name="spot_id" th:value="${spot_id}" readonly="readonly" />		
 							</div>	
 								
 							<div class="form-group">
 								<label class="control-label">Nom du spot :</label> 
-								<input class="form-control" type="text" name="spotname" th:value="${spotname}" readonly="readonly" />		
+								<input class="form-control" type="text" name="spot_name" th:value="${spot_name}" readonly="readonly" />		
 							</div>
 												
 							<div class="form-group">
@@ -41,36 +41,36 @@
 							
 							<div class="form-group">
 								<label class="control-label">Id du secteur :</label> 
-								<input class="form-control" type="text" name="secteurId" th:value="${secteurId}" readonly="readonly" />
+								<input class="form-control" type="text" name="secteur_id" th:value="${secteur_id}" readonly="readonly" />
 							</div>
 							
 							<div class="form-group">
 								<label class="control-label">Nom du secteur :</label> 
-								<input class="form-control" type="text" name="secteurname" th:value="${secteurname}" readonly="readonly" />
+								<input class="form-control" type="text" name="secteur_name" th:value="${secteur_name}" readonly="readonly" />
 							</div>
 							
 							<div class="form-group">
 								<label class="control-label">Id de la voie :</label> 
-								<input class="form-control" type="text" name="voieId" th:value="${voieId}" readonly="readonly" />
+								<input class="form-control" type="text" name="voie_id" th:value="${voie_id}" readonly="readonly" />
 							</div>
 							
 							<div class="form-group">
 								<label class="control-label">Nom de la voie :</label> 
-								<input class="form-control" type="text" name="voiename" th:value="${voiename}" readonly="readonly" />
+								<input class="form-control" type="text" name="voie_name" th:value="${voie_name}" readonly="readonly" />
 							</div>
 							<div class="form-group">
 								<label class="control-label">Cotation de la voie :</label> 
-								<input class="form-control" type="text" name="voiecotation" th:value="${voiecotation}" readonly="readonly" />
+								<input class="form-control" type="text" name="voie_cotation" th:value="${voie_cotation}" readonly="readonly" />
 							</div>
 								
 							<div class="form-group">
 								<label class="control-label">Nom de la longueur :</label> 
-								<input class="form-control" type="text" name="longueurname" th:value="${longueurname}" />
+								<input class="form-control" type="text" name="longueur_name" th:value="${longueur_name}" />
 							</div>	
 									
 							<div class="form-group">
 								<label class="control-label">Cotation de la longueur :</label> 
-								<input class="form-control" type="text" name="longueurcotation" th:value="${longueurcotation}" />
+								<input class="form-control" type="text" name="longueur_cotation" th:value="${longueur_cotation}" />
 							</div>		
 									
 							<button type="submit" class="btn btn-primary">Enregistrer</button>
@@ -78,6 +78,6 @@
 					</div>
 				</div>
 			</div>
-		</div>
+		<!-- </div> -->
 </body>
 </html>

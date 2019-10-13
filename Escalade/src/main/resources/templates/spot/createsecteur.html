@@ -9,8 +9,8 @@
 </head>
 <body>
 	<div layout:fragment="content">	
-		<div th:if="${userEmail != null}">
-			<div th:if="${userEmail} == ${madeByUser}">
+		 <div th:if="${userEmail != null}">
+			<!--  <div th:if="${userEmail} == ${madeByUser}">  -->
 				<div class="col-md-6">			
 					<form th:action="@{/createsecteur}" method="post">
 					
@@ -21,12 +21,12 @@
 											
 							<div class="form-group">
 								<label class="control-label">Id du spot :</label> 
-								<input class="form-control" type="text" name="spotId" th:value="${spotId}" readonly="readonly" />		
+								<input class="form-control" type="text" name="spot_id" th:value="${spot_id}" readonly="readonly" />		
 							</div>
 								
 							<div class="form-group">
 								<label class="control-label">Nom du spot :</label> 
-								<input class="form-control" type="text" name="spotname" th:value="${spotname}" readonly="readonly" />		
+								<input class="form-control" type="text" name="spot_name" th:value="${spot_name}" readonly="readonly" />		
 							</div>	
 										
 							<div class="form-group">
@@ -41,13 +41,13 @@
 							
 							<div class="form-group">
 								<label class="control-label">Nom du secteur :</label> 
-								<input class="form-control" type="text" name="secteurname">
+								<input class="form-control" type="text" name="secteur_name">
 							</div>
 								<button type="submit" class="btn btn-primary">Enregistrer</button>
 						</form>
 				</div>
 			</div>
 		</div>
-	</div>
+	<!--   </div>  -->
 </body>
 </html>

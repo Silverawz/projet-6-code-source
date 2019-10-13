@@ -9,10 +9,17 @@ import com.deroussen.entities.Spot;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 @Repository("spotRepository")
 public interface SpotRepository extends JpaRepository <Spot, Long> {
-	Spot findBySpotname(String name);
-	public Page <Spot> findBySpotnameContains(String mc, Pageable page);
-	Spot findByid(Long id);
+	
+	@Query("from Spot s where s.spot_name=?1")
+	Spot findBySpot_name(String name);
+	
+	
+	@Query("from Spot s where s.spot_id=?1")
+	Spot findByid(Long id);	
+	
+
 }

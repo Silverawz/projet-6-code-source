@@ -19,49 +19,33 @@ import javax.persistence.Table;
 @Table(name="voie")
 public class Voie {
 
-	@Id @GeneratedValue(strategy= GenerationType.AUTO)
-	private Long id;
+	@Id @GeneratedValue(strategy= GenerationType.IDENTITY)
+	private Long voie_id;
 	
-	@Column(name="voiename")
-	private String voiename;
+	@Column(name="voie_name")
+	private String voie_name;
 
-	@Column(name="voiecotation")
-	private String voiecotation;
+	@Column(name="voie_cotation")
+	private String voie_cotation;
 	
 	@ManyToOne
 	private Secteur secteur;
 	
-	@OneToMany(mappedBy="voie", cascade = CascadeType.REMOVE)
+	@OneToMany(mappedBy="voie", cascade = CascadeType.ALL)
 	private List <Longueur> longueurs;
 	
-	public Voie(Long id, String voiename, String voiecotation, String secteurname) {
-		super();
-		this.id = id;
-		this.voiename = voiename;
-		this.voiecotation = voiecotation;
-	}
 
-	public Voie(Long id, String voiename, String voiecotation, String secteurname, Secteur secteur) {
-		super();
-		this.id = id;
-		this.voiename = voiename;
-		this.voiecotation = voiecotation;
-		this.secteur = secteur;
-	}
 	
-	public Voie(Long id, String voiename, String voiecotation, Secteur secteur, List<Longueur> longueurs) {
-		super();
-		this.id = id;
-		this.voiename = voiename;
-		this.voiecotation = voiecotation;
-		this.secteur = secteur;
-		this.longueurs = longueurs;
-	}
-
 	public Voie() {
 		
 	}
 	
+	public Voie(String voie_name, String voie_cotation) {
+		super();
+		this.voie_name = voie_name;
+		this.voie_cotation = voie_cotation;
+	}
+
 	public List<Longueur> getLongueurs() {
 		return longueurs;
 	}
@@ -78,29 +62,30 @@ public class Voie {
 		this.secteur = secteur;
 	}
 
-	public Long getId() {
-		return id;
+	public Long getVoie_id() {
+		return voie_id;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setVoie_id(Long voie_id) {
+		this.voie_id = voie_id;
 	}
 
-	public String getVoiename() {
-		return voiename;
+	public String getVoie_name() {
+		return voie_name;
 	}
 
-	public void setVoiename(String voiename) {
-		this.voiename = voiename;
+	public void setVoie_name(String voie_name) {
+		this.voie_name = voie_name;
 	}
 
-	public String getVoiecotation() {
-		return voiecotation;
+	public String getVoie_cotation() {
+		return voie_cotation;
 	}
 
-	public void setVoiecotation(String voiecotation) {
-		this.voiecotation = voiecotation;
+	public void setVoie_cotation(String voie_cotation) {
+		this.voie_cotation = voie_cotation;
 	}
+	
 
 	
 	
