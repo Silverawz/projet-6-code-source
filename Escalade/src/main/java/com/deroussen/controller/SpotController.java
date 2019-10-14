@@ -43,9 +43,11 @@ public class SpotController {
 	
 	@RequestMapping(value={"/createspot"}, method=RequestMethod.POST)
 	public ModelAndView formPost(@Valid Spot spot, BindingResult bindingResult,
-			@SessionAttribute("userEmail") String userEmail) {
+			@SessionAttribute("userEmail") String userEmail,
+			@RequestParam(name="continueToCreateSecteur") boolean continueAndCreateASecteur
+			) {
 		ModelAndView modelView = new ModelAndView();
-		Spot spotExists = spotService.findSpotByName(spot.getSpot_name());
+		Spot spotExists = spotService.findSpotByName(spot.getSpot_name());	
 		if(spotExists != null) {
 			bindingResult.rejectValue("spotname","This spotname already exists!"); //  TODO
 		}
@@ -66,11 +68,14 @@ public class SpotController {
 				spot.setIs_official(false);
 			}
 			spot.setUser(userService.findUserByEmail(userEmail));
-			
-			
 			spotService.saveSpot(spot);
 			// model.addObject("msg","The spot has been created successfully!"); // TODO
-			modelView.setViewName("redirect:/createsecteur?id="+spot.getSpot_id());
+			if(continueAndCreateASecteur == true) {
+				modelView.setViewName("redirect:/createsecteur?id="+spot.getSpot_id());
+			}
+			else {
+				modelView.setViewName("redirect:/listespot");
+			}
 		}	
 		return modelView;
 	}
@@ -94,6 +99,7 @@ public class SpotController {
 		ModelAndView modelView = new ModelAndView();
 		Spot spot = spotRepository.getOne(spotId);
 		modelView.addObject("spot_id", spotId);
+		modelView.addObject("spot_lieu", spot.getSpot_lieu());
 		modelView.addObject("spot_name", spot.getSpot_name());
 		modelView.addObject("is_equipped", spot.isIs_equipped());
 		modelView.addObject("is_official", spot.isIs_official());

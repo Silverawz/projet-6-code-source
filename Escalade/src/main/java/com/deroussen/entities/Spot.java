@@ -15,6 +15,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="spot")
@@ -23,8 +24,13 @@ public class Spot {
 	@Id @GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long spot_id;
 	
+	@Size(min=3, max =30)
 	@Column(name="spot_name")
 	private String spot_name;
+	
+	@Size(min=3, max =30)
+	@Column(name="spot_lieu")
+	private String spot_lieu;
 	
 	@Column(name="is_equipped")
 	private boolean is_equipped;
@@ -47,6 +53,14 @@ public class Spot {
 		this.spot_name = spot_name;
 		this.is_equipped = is_equipped;
 		this.is_official = is_official;
+	}
+
+	public String getSpot_lieu() {
+		return spot_lieu;
+	}
+
+	public void setSpot_lieu(String spot_lieu) {
+		this.spot_lieu = spot_lieu;
 	}
 
 	public Long getSpot_id() {

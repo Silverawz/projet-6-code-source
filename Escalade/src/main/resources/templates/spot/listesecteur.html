@@ -18,34 +18,48 @@
 								</form>
 							</div>
 							
-						<h4>Nom du spot :</h4>
-						<div th:text="${spot_name}"></div>
-						<h4>ID du spot :</h4>
-						<div th:text="${spot_id}"></div>
+						<div th:if="${spot_name != null}">
+						<h6>Nom du spot :   <a th:href="@{/listespot(id=${spot_id})}" th:text="${spot_name}"></a></h6>
+						<h6>Lieu du spot :   <span th:text="${spot_lieu}"></span> </h6>
+						<h6>ID du spot :   <span th:text="${spot_id}"></span> </h6>
+						</div>
 						
+						<a th:href="@{/listesecteurs}">Liste de tout les secteurs</a>
+						
+						<div th:if="${spot_id != null}">
+						<div th:if="${userEmail == userThatCreateTheSpot}">
+						<a th:href="@{/createsecteur(id=${spot_id})}">
+						Ajouter un nouveau secteur au spot</a>
+						</div><br>
+						</div>
+							
 						<div class="panel-heading">Liste des secteurs</div>
 					<div class="panel-body">
 						<table class="table">
 							<tr>
 								<th>ID du secteur</th>
 								<th>Nom du secteur</th>
+								<th>Nombre de voie(s)</th>
 							</tr>
-							<tr th:each="s:${secteurlist}">
-							
+							<tr th:each="s:${secteurlist}">						
 								<td th:text=${s.secteur_id}></td>
 								<td th:text=${s.secteur_name}></td>
+								<td th:text=${s.getVoies().size()}></td>
 								<td><a th:href="@{/listevoie(id=${s.secteur_id})}">
 								Voir le(s) voie(s) de ce secteur</a>
 								</td>
-								<td th:if="${userEmail == userThatCreateTheSpot}">
+								
+								
+								<td th:if="${userEmail != null and userEmail == userThatCreateTheSpot}">
 								<a th:href="@{/createvoie(id=${s.secteur_id})}">
 								Ajouter une voie</a>
 								</td>
-								<td th:if="${userEmail == userThatCreateTheSpot}">
+								
+								<td th:if="${userEmail != null and userEmail == userThatCreateTheSpot}">
 								<a th:href="@{/changesecteur(id=${s.secteur_id})}">
 								Modifier le secteur</a>
 								</td>
-								<td th:if="${userEmail == userThatCreateTheSpot}">
+								<td th:if="${userEmail != null and userEmail == userThatCreateTheSpot}">
 								<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletesecteur(id=${s.secteur_id}, page=${currentPage}, motCle=${motCle})}">
 								Supprimer le secteur</a>
 								</td>

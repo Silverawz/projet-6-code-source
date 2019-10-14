@@ -50,6 +50,7 @@ public class VoieController {
 		Long spotId = secteur.getSpot().getSpot_id();
 		Spot spot = spotService.findById(spotId);
 		modelView.addObject("spot_id", spotId);
+		modelView.addObject("spot_lieu", spot.getSpot_lieu());
 		modelView.addObject("spot_name", spot.getSpot_name());
 		modelView.addObject("is_equipped", spot.isIs_equipped());
 		modelView.addObject("is_official", spot.isIs_official());
@@ -63,9 +64,9 @@ public class VoieController {
 
 	@RequestMapping(value={"/createvoie"}, method=RequestMethod.POST)
 	public ModelAndView formPost(@Valid Voie voie, BindingResult bindingResult,
-			@RequestParam(name="secteur_id") Long secteurId
+			@RequestParam(name="secteur_id") Long secteurId,
+			@RequestParam(name="continueToCreateLongueur") boolean continueToCreateLongueur
 			) {
-		System.out.println(voie.toString());
 		ModelAndView modelView = new ModelAndView();
 		List <Voie> voies = voieService.findBySecteurId(secteurId);
 		int sizeList = voies.size();
@@ -83,7 +84,14 @@ public class VoieController {
 		if (sizeList == matchesWithSizeList) {		 
 			voie.setSecteur(secteurService.findById(secteurId));
 			voieService.saveVoie(voie);
-			modelView.setViewName("redirect:/createlongueur?id="+voie.getVoie_id());
+			if(continueToCreateLongueur == true) {
+				modelView.setViewName("redirect:/createlongueur?id="+voie.getVoie_id());
+			}
+			else {
+				modelView.setViewName("redirect:/listevoie?id="+secteurId);
+			}
+			
+			
 		}		
 		return modelView;
 	}
@@ -107,6 +115,7 @@ public class VoieController {
 		modelView.addObject("motCle", mc);
 		modelView.addObject("userThatCreateTheSpot", spot.getUser().getEmail());
 		modelView.addObject("spot_id", spot.getSpot_id());
+		modelView.addObject("spot_lieu", spot.getSpot_lieu());
 		modelView.addObject("spot_name", spot.getSpot_name());
 		modelView.addObject("secteur_id", secteur.getSecteur_id());
 		modelView.addObject("secteur_name", secteur.getSecteur_name());
@@ -120,11 +129,14 @@ public class VoieController {
 			@SessionAttribute("userEmail") String userEmail
 			) {	
 		ModelAndView modelView = new ModelAndView();
-		Long spotId = findIdOfSpotWithVoieId(voieId);	
+		Voie voie = voieService.findById(voieId);
+		Long secteurId = voie.getSecteur().getSecteur_id();
+		Secteur secteur = secteurService.findById(secteurId);
+		Long spotId = secteur.getSpot().getSpot_id();;	
 		Spot spot = spotService.findById(spotId);
 		if(spot.getUser().getEmail().equals(userEmail)){
 			voieRepository.deleteById(voieId);
-			modelView.setViewName("redirect:/listevoie?id="+voieId);
+			modelView.setViewName("redirect:/listevoie?id="+secteurId);
 		}
 		else {
 			modelView.setViewName("errors/access_denied");
@@ -138,23 +150,24 @@ public class VoieController {
 	public ModelAndView changeVoieGet(@RequestParam(name="id") Long voieId,
 			@SessionAttribute("userEmail") String userEmail
 			) {
-		System.out.println(voieId);
 		ModelAndView modelView = new ModelAndView();
 		Voie voie = voieService.findById(voieId);
 		Long secteurId = voie.getSecteur().getSecteur_id();
 		Secteur secteur = secteurService.findById(secteurId);
 		Long spotId = secteur.getSpot().getSpot_id();
 		Spot spot = spotService.findById(spotId);
+		System.out.println(voieId);
 		if(spot.getUser().getEmail().equals(userEmail)){
 			modelView.addObject("spot_name", spot.getSpot_name());
 			modelView.addObject("spot_id", spot.getSpot_id());
+			modelView.addObject("spot_lieu", spot.getSpot_lieu());
 			modelView.addObject("secteur_name", secteur.getSecteur_name() );
 			modelView.addObject("secteur_id", secteur.getSecteur_id());
 			modelView.addObject("userThatCreateTheSpot", spot.getUser().getEmail());
-			modelView.addObject("void_id", voieId);
+			modelView.addObject("voie_id", voieId);
 			modelView.addObject("voie_name", voie.getVoie_name());
 			modelView.addObject("voie_cotation", voie.getVoie_cotation());
-			modelView.setViewName("redirect:/changevoie");
+			modelView.setViewName("spot/changevoie");
 		}
 		else {
 			modelView.setViewName("errors/access_denied");
@@ -168,9 +181,11 @@ public class VoieController {
 			) {
 		ModelAndView modelView = new ModelAndView();
 		Voie voidUpdate = voieRepository.getOne(voie.getVoie_id());
+		voidUpdate.setVoie_name(voie.getVoie_name());
+		voidUpdate.setVoie_cotation(voie.getVoie_cotation());
 		voieRepository.save(voidUpdate);
 		Long secteurId = voidUpdate.getSecteur().getSecteur_id();
-		modelView.setViewName("spot/listevoie?id="+secteurId);
+		modelView.setViewName("redirect:/listevoie?id="+secteurId);
 		return modelView;
 	}
 	

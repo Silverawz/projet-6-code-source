@@ -61,6 +61,7 @@ public class LongueurController {
 		modelView.addObject("motCle", mc);
 		modelView.addObject("userThatCreateTheSpot", spot.getUser().getEmail());
 		modelView.addObject("spot_id", spot.getSpot_id());
+		modelView.addObject("spot_lieu", spot.getSpot_lieu());
 		modelView.addObject("spot_name", spot.getSpot_name());
 		modelView.addObject("secteur_id", secteur.getSecteur_id());
 		modelView.addObject("secteur_name", secteur.getSecteur_name());
@@ -81,6 +82,7 @@ public class LongueurController {
 		Long spotId = secteur.getSpot().getSpot_id();
 		Spot spot = spotService.findById(spotId);
 		modelView.addObject("spot_id", spotId);
+		modelView.addObject("spot_lieu", spot.getSpot_lieu());
 		modelView.addObject("spot_name", spot.getSpot_name());
 		modelView.addObject("is_equipped", spot.isIs_equipped());
 		modelView.addObject("is_official", spot.isIs_official());
@@ -114,7 +116,7 @@ public class LongueurController {
 		if (sizeList == matchesWithSizeList) {
 			longueur.setVoie(voieService.findById(voieId));
 			longueurService.saveLongueur(longueur);
-			modelView.setViewName("redirect:/listespot");
+			modelView.setViewName("redirect:/listelongueur?id="+voieId);
 		}		
 		return modelView;
 	}
@@ -135,7 +137,7 @@ public class LongueurController {
 		Spot spot = spotService.findById(spotId);
 		if(spot.getUser().getEmail().equals(userEmail)){
 			longueurRepository.deleteById(longueurId);
-			modelView.setViewName("spot/listelongueur?id="+voieId);
+			modelView.setViewName("redirect:/listelongueur?id="+voieId);
 		}
 		else {
 			modelView.setViewName("errors/access_denied");
@@ -159,6 +161,7 @@ public class LongueurController {
 		if(spot.getUser().getEmail().equals(userEmail)){
 			modelView.addObject("spot_name", spot.getSpot_name());
 			modelView.addObject("spot_id", spot.getSpot_id());
+			modelView.addObject("spot_lieu", spot.getSpot_lieu());
 			modelView.addObject("secteur_name", secteur.getSecteur_name() );
 			modelView.addObject("secteur_id", secteur.getSecteur_id());
 			modelView.addObject("userThatCreateTheSpot", spot.getUser().getEmail());
@@ -168,7 +171,7 @@ public class LongueurController {
 			modelView.addObject("longueur_id", longueurId);
 			modelView.addObject("longueur_name", longueur.getLongueur_name());
 			modelView.addObject("longueur_cotation", longueur.getLongueur_cotation());
-			modelView.setViewName("redirect:/changelongueur");
+			modelView.setViewName("spot/changelongueur");
 		}
 		else {
 			modelView.setViewName("errors/access_denied");
@@ -182,9 +185,11 @@ public class LongueurController {
 			) {
 		ModelAndView modelView = new ModelAndView();
 		Longueur longueurUpdate = longueurRepository.getOne(longueur.getLongueur_id());
+		longueurUpdate.setLongueur_name(longueur.getLongueur_name());
+		longueurUpdate.setLongueur_cotation(longueur.getLongueur_cotation());
 		longueurRepository.save(longueurUpdate);
 		Long voidId = longueurUpdate.getVoie().getVoie_id();
-		modelView.setViewName("spot/listevoie?id="+voidId);
+		modelView.setViewName("redirect:/listelongueur?id="+voidId);
 		return modelView;
 	}
 	

@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="secteur")
@@ -21,6 +22,7 @@ public class Secteur {
 	@Id @GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long secteur_id;
 	
+	@Size(min=3, max =30)
 	@Column(name="secteur_name")
 	private String secteur_name;
 

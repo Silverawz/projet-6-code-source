@@ -2,7 +2,7 @@ package com.deroussen.entities;
 
 
 import java.util.List;
-import java.util.Optional;
+
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 
 @Entity
@@ -22,9 +23,11 @@ public class Voie {
 	@Id @GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long voie_id;
 	
+	@Size(min=3, max =30)
 	@Column(name="voie_name")
 	private String voie_name;
 
+	@Size(min=1, max =3)
 	@Column(name="voie_cotation")
 	private String voie_cotation;
 	

@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="longueur")
@@ -15,9 +16,11 @@ public class Longueur {
 	@Id @GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long longueur_id;
 	
+	@Size(min=3, max =30)
 	@Column(name="longueur_name")
 	private String longueur_name;
 
+	@Size(min=1, max =3)
 	@Column(name="longueur_cotation")
 	private String longueur_cotation;
 	

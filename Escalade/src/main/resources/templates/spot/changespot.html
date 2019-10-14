@@ -17,10 +17,15 @@
 							<label class="control-label">ID du spot :       </label> 
 								<input class="form-control" type="text" name="spot_id" th:value="${spot_id}" readonly="readonly"/>
 						</div>
-																									
+						
+						<div class="form-group">
+							<label class="control-label">Lieu du spot :       </label> 
+								<input class="form-control" type="text" name="spot_lieu" th:value="${spot_lieu}" pattern="[A-Za-z]{3,30}" required>
+						</div>
+																								
 						<div class="form-group">
 							<label class="control-label">Nom du spot :       </label> 
-								<input class="form-control" type="text" name="spot_name" th:value="${spot_name}">
+								<input class="form-control" type="text" name="spot_name" th:value="${spot_name}" pattern="[A-Za-z]{3,30}" required>
 						</div>
 						
 						<div class="form-group">

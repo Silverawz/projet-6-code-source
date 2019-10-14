@@ -23,7 +23,12 @@
 								<label class="control-label">Id du spot :</label> 
 								<input class="form-control" type="text" name="spot_id" th:value="${spot_id}" readonly="readonly" />		
 							</div>
-								
+							
+							<div class="form-group">
+							<label class="control-label">Lieu du spot:       </label> 
+								<input class="form-control" type="text" name="spot_lieu" th:value="${spot_lieu}" readonly="readonly"/>
+							</div>
+							
 							<div class="form-group">
 								<label class="control-label">Nom du spot :</label> 
 								<input class="form-control" type="text" name="spot_name" th:value="${spot_name}" readonly="readonly" />		
@@ -41,8 +46,16 @@
 							
 							<div class="form-group">
 								<label class="control-label">Nom du secteur :</label> 
-								<input class="form-control" type="text" name="secteur_name">
+								<input class="form-control" type="text" name="secteur_name" pattern="[A-Za-z]{3,30}" required>
 							</div>
+							
+							<div class="form-group">
+							<label for="control-label">Continuer en créant une voie pour ce secteur ?</label>
+								<select name="continueToCreateVoie" id="continueToCreateVoie">
+									<option selected="selected" value="true">oui</option>
+									<option value="false">non</option>
+								</select>
+							</div>	
 								<button type="submit" class="btn btn-primary">Enregistrer</button>
 						</form>
 				</div>

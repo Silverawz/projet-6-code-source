@@ -25,6 +25,11 @@
 							</div>	
 							
 							<div class="form-group">
+							<label class="control-label">Lieu du spot:       </label> 
+								<input class="form-control" type="text" name="spot_lieu" th:value="${spot_lieu}" readonly="readonly"/>
+							</div>
+							
+							<div class="form-group">
 								<label class="control-label">Nom du spot :</label> 
 								<input class="form-control" type="text" name="spot_name" th:value="${spot_name}" readonly="readonly" />		
 							</div>
@@ -52,13 +57,27 @@
 							
 							<div class="form-group">
 								<label class="control-label">Nom de la voie :</label> 
-								<input class="form-control" type="text" name="voie_name" th:value="${voie_name}">
+								<input class="form-control" type="text" name="voie_name" th:value="${voie_name}" pattern="[A-Za-z]{3,30}" required>
 							</div>
 							<div class="form-group">
 								<label class="control-label">Cotation de la voie :</label> 
-								<input class="form-control" type="text" name="voie_cotation" th:value="${voie_cotation}">
+								<input class="form-control" type="text" name="voie_cotation" th:value="${voie_cotation}" 
+								pattern="[1-4]{1}|[5a]{2}|[5b]{2}|[5c]{2}|
+								[6a]{2}|[6a+]{3}|[6b]{2}|[6b+]{3}|[6c]{2}|[6c+]{3}|
+								[7a]{2}|[7a+]{3}|[7b]{2}|[7b+]{3}|[7c]{2}|[7c+]{3}|
+								[8a]{2}|[8a+]{3}|[8b]{2}|[8b+]{3}|[8c]{2}|[8c+]{3}|
+								[9a]{2}|[9a+]{3}|[9b]{2}|[9b+]{3}|[9c]{2}" required>
 							</div>
-												
+							
+							<div class="form-group">
+							<label for="control-label">Continuer en créant une longueur pour cette voie ?</label>
+								<select name="continueToCreateLongueur" id="continueToCreateLongueur">
+									<option selected="selected" value="true">oui</option>
+									<option value="false">non</option>
+								</select>
+							</div>	
+							
+										
 								<button type="submit" class="btn btn-primary">Enregistrer</button>
 						</form>
 					</div>

@@ -11,29 +11,45 @@
 	<div layout:fragment="content">	
 <div class="container">
 			<div class="panel panel-primary">
-				<div class="panel-heading">Liste des sites d'escalade</div>
 				<div class="panel-body">
 					<form th:action="@{/index}" method="get">
 						<label>Mot clé :</label> <input type="text" name="motCle"
 							th:value="${motCle}">
+							
 						<button type="submit" class="btn btn-primary">Chercher</button>
-					</form>
+						<br><br>
+						<div class="form-group">
+						<label for="control-label">Recherche avancée</label>
+							<select name="continueToCreateVoie" id="continueToCreateVoie">
+									<option selected="selected" value="true">Le spot est officiel et il est equipé</option>
+								<option value="false">Le spot est officiel mais il n'est pas equipé</option>
+								<option value="false">Le spot n'est pas officiel mais il est equipé</option>
+								<option value="false">Le spot n'est ni officiel ni equipé</option>
+							</select>
+						</div>	
+					</form>			
 				</div>
+				<a th:href="@{/listespot}">Liste de tout les spots</a>
+				<div class="panel-heading">Liste des sites d'escalade</div>
 				<div class="panel-body">
 					<table class="table">
 						<tr>
 							<th>ID du spot</th>
 							<th>Nom du spot</th>
+							<th>Lieu du spot</th>
 							<th>Equipé</th>
 							<th>Officiel "Les amis de l'escalade"</th>
 							<th>Crée par</th>
+							<th>Nombre de secteur(s)</th>
 						</tr>
 						<tr th:each="s:${spotlist}">
 							<td th:text=${s.spot_id}></td>
 							<td th:text=${s.spot_name}></td>
+							<td th:text=${s.spot_lieu}></td>
 							<td th:text=${s.is_equipped}></td>
 							<td th:text=${s.is_official}></td>
 							<td th:text=${s.user.getFirstname()}></td>
+							<td th:text=${s.getSecteurs().size()}></td>
 							<td><a th:href="@{/listesecteur(id=${s.spot_id})}">
 							Voir le(s) secteur(s)</a>
 							</td>
@@ -49,7 +65,6 @@
 							<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletespot(id=${s.spot_id}, page=${currentPage}, motCle=${motCle})}">
 							Supprimer le spot</a>
 							</td>
-							
 						</tr>
 					</table>
 
