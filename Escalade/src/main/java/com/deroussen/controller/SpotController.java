@@ -1,6 +1,9 @@
 package com.deroussen.controller;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.validation.Valid;
 
 
@@ -84,15 +87,18 @@ public class SpotController {
 	public ModelAndView listeSpot(
 			@RequestParam(name="page", defaultValue= "0") int page,
 			@RequestParam(name="motCle", defaultValue= "") String mc,
-			@RequestParam(name="choice", defaultValue= "everyspots") String choice
+			@RequestParam(name="choice", defaultValue= "everyspots") String selector
 			) {
 		ModelAndView modelView = new ModelAndView();
-		Page <Spot> spots = spotService.findBySpotContains(mc, PageRequest.of(page, 10), choice);
+		List<String> listChoices = listOfChoices();	
+		String parameterToGetTheSpotResearch = comparingChoices(listChoices, selector);		
+		Page <Spot> spots = spotService.findBySpotContains(mc, PageRequest.of(page, 10), parameterToGetTheSpotResearch);
 		modelView.addObject("spotlist", spots.getContent());
 		modelView.addObject("pages",new int[spots.getTotalPages()]);
 		modelView.addObject("currentPage",page);
 		modelView.addObject("motCle", mc);
-		modelView.addObject("choice", choice);
+		modelView.addObject("choices", listChoices);
+		modelView.addObject("selector", selector);
 		modelView.setViewName("/spot/listespot");
 		return modelView;
 	}
@@ -152,4 +158,43 @@ public class SpotController {
 		return modelView;
 	}
 	
+	
+
+	public List<String> listOfChoices(){	
+		String choice1 = "Tous les spots (peu importe si équipé ou officiel)"; 
+		String choice2 = "Le spot est officiel et il est equipé";
+		String choice3 = "Le spot est officiel mais il n'est pas equipé"; 
+		String choice4 = "Le spot n'est pas officiel mais il est equipé";
+		String choice5 = "Le spot n'est ni officiel ni equipé";
+		List<String> choices = new ArrayList<>();
+		choices.add(choice1);
+		choices.add(choice2);
+		choices.add(choice3);
+		choices.add(choice4);
+		choices.add(choice5);	
+		return choices;
+	}
+	
+	
+	public String comparingChoices(List<String> list, String selector){
+		String parameterToGetTheSpot = "";
+		if(selector.equals(list.get(0))) {
+			parameterToGetTheSpot = "everyspots";
+		}
+		else if(selector.equals(list.get(1))) {
+			parameterToGetTheSpot = "true_true";
+		}
+		else if(selector.equals(list.get(2))) {
+			parameterToGetTheSpot = "true_false";
+		}
+		else if(selector.equals(list.get(3))) {
+			parameterToGetTheSpot = "false_true";
+		}
+		else if(selector.equals(list.get(4))){
+			parameterToGetTheSpot = "false_false";
+		}	
+		return parameterToGetTheSpot;
+	}
 }
+
+

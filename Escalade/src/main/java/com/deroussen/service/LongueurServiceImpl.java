@@ -2,6 +2,7 @@ package com.deroussen.service;
 
 import java.util.ArrayList;
 
+
 import java.util.List;
 
 
@@ -13,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import com.deroussen.dao.LongueurRepository;
 import com.deroussen.entities.Longueur;
-import com.deroussen.entities.Secteur;
 
 @Service("longueurService")
 public class LongueurServiceImpl implements LongueurService {

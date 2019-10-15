@@ -15,15 +15,15 @@
 					<form th:action="@{/listespot}" method="get">
 						<br>
 						<div class="form-group">
-						<label for="control-label">Recherche avancée</label>
-							<select name="choice" id="choice">			
-								<option value="everyspots">Tous les spots (peu importe si équipé ou officiel)</option>
-								<option value="true_true">Le spot est officiel et il est equipé</option>
-								<option value="true_false">Le spot est officiel mais il n'est pas equipé</option>
-								<option value="false_true">Le spot n'est pas officiel mais il est equipé</option>
-								<option value="false_false">Le spot n'est ni officiel ni equipé</option>
+						
+						
+						<label for="control-label">Recherche avancée</label>	
+								
+							<select name="choice" id="choice">												
+								<option th:each="c:${choices}" th:value="${c}" th:text="${c}" th:selected="${c.equals(selector)}">
+								</option>
 							</select>
-							<!-- th:selected="${choice == false_false}" th: -->		
+								
 						<label>Mot clé :</label> <input type="text" name="motCle"th:value="${motCle}">	
 						<button type="submit" class="btn btn-primary">Chercher</button>
 						</div>	
