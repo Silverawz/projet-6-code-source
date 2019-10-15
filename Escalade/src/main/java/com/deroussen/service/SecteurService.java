@@ -15,6 +15,6 @@ public interface SecteurService {
 	public Secteur findBySecteurname(String name);
 	public void saveSecteur(Secteur secteur);
 	public List<Secteur> findBySpotId(Long id);
-	public Page<Secteur> findBySecteurnameContainsFromSpotId(Long id, String mc, Pageable page);
+	public Page<Secteur> findBySecteurContainsFromSpotId(Long id, String mc, Pageable page);
 
 }

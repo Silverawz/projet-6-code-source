@@ -11,6 +11,6 @@ public interface VoieService {
 	public Voie findById(Long id);	
 	public void saveVoie(Voie voie);
 	public List<Voie> findBySecteurId(Long id);
-	public Page<Voie> findByVoienameContainsFromSecteurId(Long id, String mc, Pageable page);
+	public Page<Voie> findByVoieContainsFromSecteurId(Long id, String mc, Pageable page);
 	
 }

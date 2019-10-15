@@ -4,8 +4,7 @@ package com.deroussen.controller;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-
+import java.util.Map;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,8 +89,7 @@ public class SecteurController {
 			}
 			else {
 				modelView.setViewName("redirect:/listesecteur?id="+spotId);
-			}
-			
+			}	
 		}		
 		return modelView;
 	}
@@ -103,7 +101,7 @@ public class SecteurController {
 			@RequestParam(name="motCle", defaultValue= "") String mc
 			) {
 		ModelAndView modelView = new ModelAndView();
-		Page <Secteur> secteurs = secteurService.findBySecteurnameContainsFromSpotId(spotId, mc, PageRequest.of(page, 10));
+		Page <Secteur> secteurs = secteurService.findBySecteurContainsFromSpotId(spotId, mc, PageRequest.of(page, 10));
 		Spot spot = spotService.findById(spotId);
 		modelView.addObject("secteurlist", secteurs.getContent());
 		modelView.addObject("pages",new int[secteurs.getTotalPages()]);
@@ -115,27 +113,6 @@ public class SecteurController {
 		modelView.addObject("userThatCreateTheSpot", spot.getUser().getEmail());
 		modelView.setViewName("/spot/listesecteur");
 		return modelView;
-	}
-		
-	
-	@RequestMapping(value={"/listesecteurs"}, method=RequestMethod.GET)
-	public ModelAndView listeSecteurs() {
-		ModelAndView modelView = new ModelAndView();
-		List <Spot> spots = spotRepository.findAll();
-		List <Secteur> secteurs = new ArrayList<Secteur>();
-		List <String> users = new ArrayList<String>();
-		for (Spot spot : spots) {
-			int sizeOfSecteursList = spot.getSecteurs().size();
-			for(int i = 0; i < sizeOfSecteursList ;i+=0) {
-				users.add(spot.getUser().getEmail());
-				secteurs.add(spot.getSecteurs().get(i));
-				i++;
-			}
-		}
-		Page <Secteur> pageList = new PageImpl<>(secteurs);
-		modelView.addObject("secteurlist", pageList);	
-		modelView.setViewName("/spot/listesecteur");
-		return modelView;	
 	}
 	
 	

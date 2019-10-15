@@ -38,17 +38,45 @@ public class VoieServiceImpl implements VoieService {
 	}
 
 	@Override
-	public Page<Voie> findByVoienameContainsFromSecteurId(Long id, String mc, Pageable page) {
+	public Page<Voie> findByVoieContainsFromSecteurId(Long id, String motcle, Pageable page) {
+		String mcLowerCase = motcle.toLowerCase();	
 		List <Voie> voiesWithSecteurId = voieRepository.findBySecteurId(id);
-		List <Voie> voiesThatMatchesWithResearch = new ArrayList<>();
-		for (Voie voie : voiesWithSecteurId) {
-			if(voie.getVoie_name().contains(mc)) {
-				voiesThatMatchesWithResearch.add(voie);
-			}	
+		if(motcle.equals("")) {
+			Page <Voie> voiesPageList = new PageImpl<>(voiesWithSecteurId);
+			return voiesPageList;
 		}
+		
+		else {
+			List <Voie> voiesThatMatchesWithResearch = new ArrayList<>();
+			for(Voie voie : voiesWithSecteurId) {
+				
+				int indicatorThatVoieIsAlreadyPut = 0;
+				String voieId = String.valueOf(voie.getVoie_id());
+				if(voieId.contains(mcLowerCase)) {
+					voiesThatMatchesWithResearch.add(voie);
+					indicatorThatVoieIsAlreadyPut++;
+				}
+				else if(voie.getVoie_name().toLowerCase().contains(mcLowerCase)) {
+					voiesThatMatchesWithResearch.add(voie);
+					indicatorThatVoieIsAlreadyPut++;
+				}
+				else if(voie.getVoie_cotation().toLowerCase().contains(mcLowerCase)) {
+					voiesThatMatchesWithResearch.add(voie);
+					indicatorThatVoieIsAlreadyPut++;	
+				}
+				else if(indicatorThatVoieIsAlreadyPut == 0) {
+					String size = Integer.toString(voie.getLongueurs().size());
+					if(size.contains(mcLowerCase)) {
+						voiesThatMatchesWithResearch.add(voie);
+					}	
+				}						
+			}
 		Page <Voie> voiesPageList = new PageImpl<>(voiesThatMatchesWithResearch);
-		return voiesPageList;
+		return voiesPageList;	
+		}
 	}
 
+	
+	
 	
 }

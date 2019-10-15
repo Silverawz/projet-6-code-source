@@ -12,24 +12,23 @@
 <div class="container">
 			<div class="panel panel-primary">
 				<div class="panel-body">
-					<form th:action="@{/index}" method="get">
-						<label>Mot clé :</label> <input type="text" name="motCle"
-							th:value="${motCle}">
-							
-						<button type="submit" class="btn btn-primary">Chercher</button>
-						<br><br>
+					<form th:action="@{/listespot}" method="get">
+						<br>
 						<div class="form-group">
 						<label for="control-label">Recherche avancée</label>
-							<select name="continueToCreateVoie" id="continueToCreateVoie">
-									<option selected="selected" value="true">Le spot est officiel et il est equipé</option>
-								<option value="false">Le spot est officiel mais il n'est pas equipé</option>
-								<option value="false">Le spot n'est pas officiel mais il est equipé</option>
-								<option value="false">Le spot n'est ni officiel ni equipé</option>
+							<select name="choice" id="choice">			
+								<option value="everyspots">Tous les spots (peu importe si équipé ou officiel)</option>
+								<option value="true_true">Le spot est officiel et il est equipé</option>
+								<option value="true_false">Le spot est officiel mais il n'est pas equipé</option>
+								<option value="false_true">Le spot n'est pas officiel mais il est equipé</option>
+								<option value="false_false">Le spot n'est ni officiel ni equipé</option>
 							</select>
+							<!-- th:selected="${choice == false_false}" th: -->		
+						<label>Mot clé :</label> <input type="text" name="motCle"th:value="${motCle}">	
+						<button type="submit" class="btn btn-primary">Chercher</button>
 						</div>	
 					</form>			
 				</div>
-				<a th:href="@{/listespot}">Liste de tout les spots</a>
 				<div class="panel-heading">Liste des sites d'escalade</div>
 				<div class="panel-body">
 					<table class="table">
@@ -64,6 +63,9 @@
 							<td th:if="${userEmail == s.user.getEmail()}">
 							<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletespot(id=${s.spot_id}, page=${currentPage}, motCle=${motCle})}">
 							Supprimer le spot</a>
+							</td>
+							<td><a th:href="@{/listecommentaire(id=${s.spot_id})}">
+							Voir le(s) commentaires(s)</a>
 							</td>
 						</tr>
 					</table>

@@ -49,7 +49,7 @@ public class LongueurController {
 			@RequestParam(name="page", defaultValue= "0") int page,
 			@RequestParam(name="motCle", defaultValue= "") String mc) {
 		ModelAndView modelView = new ModelAndView();
-		Page <Longueur> longueurs = longueurService.findByLongueurnameContainsFromVoieId(voieId, mc, PageRequest.of(page, 10));
+		Page <Longueur> longueurs = longueurService.findByLongueurContainsFromVoieId(voieId, mc, PageRequest.of(page, 10));
 		Voie voie = voieService.findById(voieId);
 		Long secteurId = voie.getSecteur().getSecteur_id();
 		Secteur secteur = secteurService.findById(secteurId);

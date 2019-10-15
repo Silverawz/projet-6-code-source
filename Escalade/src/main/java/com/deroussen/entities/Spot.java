@@ -41,6 +41,9 @@ public class Spot {
 	@OneToMany(mappedBy="spot",cascade = CascadeType.ALL)
 	private List <Secteur> secteurs;
 	
+	@OneToMany(mappedBy="spot",cascade = CascadeType.ALL)
+	private List <Commentaire> commentaires;
+	
 	@ManyToOne
 	private User user;
 	

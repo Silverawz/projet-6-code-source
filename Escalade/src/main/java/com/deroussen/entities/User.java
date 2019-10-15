@@ -43,8 +43,12 @@ public class User {
 
 	@OneToMany(mappedBy="user")
 	private List <Spot> spots;
-		
+	
+	@OneToMany(mappedBy="user")
+	private List <Commentaire> commentaires;
 
+	
+	
 	public User() {
 		super();
 	}

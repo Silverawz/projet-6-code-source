@@ -12,19 +12,19 @@
 			<div class="container">
 				<div class="panel panel-primary">
 							<div class="panel-body">
-								<form th:action="@{/index}" method="get">
+								<form th:action="@{/listesecteur}" method="get">
+									<input type="hidden" name="id"  th:value="${spot_id}">
 									<label>Mot clé :</label> <input type="text" name="motCle" th:value="${motCle}">
 									<button type="submit" class="btn btn-primary">Chercher</button>
 								</form>
 							</div>
 							
-						<div th:if="${spot_name != null}">
+	
 						<h6>Nom du spot :   <a th:href="@{/listespot(id=${spot_id})}" th:text="${spot_name}"></a></h6>
 						<h6>Lieu du spot :   <span th:text="${spot_lieu}"></span> </h6>
 						<h6>ID du spot :   <span th:text="${spot_id}"></span> </h6>
-						</div>
 						
-						<a th:href="@{/listesecteurs}">Liste de tout les secteurs</a>
+						
 						
 						<div th:if="${spot_id != null}">
 						<div th:if="${userEmail == userThatCreateTheSpot}">
@@ -41,29 +41,28 @@
 								<th>Nom du secteur</th>
 								<th>Nombre de voie(s)</th>
 							</tr>
-							<tr th:each="s:${secteurlist}">						
+							<tr th:each="s:${secteurlist}">				
 								<td th:text=${s.secteur_id}></td>
 								<td th:text=${s.secteur_name}></td>
 								<td th:text=${s.getVoies().size()}></td>
-								<td><a th:href="@{/listevoie(id=${s.secteur_id})}">
+								 <td><a th:href="@{/listevoie(id=${s.secteur_id})}">
 								Voir le(s) voie(s) de ce secteur</a>
 								</td>
 								
 								
-								<td th:if="${userEmail != null and userEmail == userThatCreateTheSpot}">
+								<td th:if="${userEmail == userThatCreateTheSpot}">
 								<a th:href="@{/createvoie(id=${s.secteur_id})}">
 								Ajouter une voie</a>
 								</td>
 								
-								<td th:if="${userEmail != null and userEmail == userThatCreateTheSpot}">
+								<td th:if="${userEmail == userThatCreateTheSpot}">
 								<a th:href="@{/changesecteur(id=${s.secteur_id})}">
 								Modifier le secteur</a>
 								</td>
-								<td th:if="${userEmail != null and userEmail == userThatCreateTheSpot}">
+								<td th:if="${userEmail == userThatCreateTheSpot}">
 								<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletesecteur(id=${s.secteur_id}, page=${currentPage}, motCle=${motCle})}">
 								Supprimer le secteur</a>
 								</td>
-								
 							</tr>
 						</table>
 	

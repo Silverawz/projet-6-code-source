@@ -11,7 +11,7 @@ public interface LongueurService {
 	
 	public List<Longueur> findByVoieId(Long id);
 	void saveLongueur(Longueur longueur);
-	public Page<Longueur> findByLongueurnameContainsFromVoieId(Long id, String mc, Pageable page);
+	public Page<Longueur> findByLongueurContainsFromVoieId(Long id, String mc, Pageable page);
 	public Longueur findByid(Long id);
 	
 }

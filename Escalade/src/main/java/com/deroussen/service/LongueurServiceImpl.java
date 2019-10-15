@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.deroussen.dao.LongueurRepository;
 import com.deroussen.entities.Longueur;
+import com.deroussen.entities.Secteur;
 
 @Service("longueurService")
 public class LongueurServiceImpl implements LongueurService {
@@ -36,17 +37,35 @@ public class LongueurServiceImpl implements LongueurService {
 
 
 	@Override
-	public Page<Longueur> findByLongueurnameContainsFromVoieId(Long id, String mc, Pageable page) {
-			List <Longueur> longueurssWithVoieId = longueurRepository.findByVoieId(id);
+	public Page<Longueur> findByLongueurContainsFromVoieId(Long id, String motcle, Pageable page) {
+		String mcLowerCase = motcle.toLowerCase();
+		List <Longueur> longueurssWithVoieId = longueurRepository.findByVoieId(id);
+		if(motcle.equals("")) {
+			Page <Longueur> longueursPageList = new PageImpl<>(longueurssWithVoieId);
+			return longueursPageList;
+		}	
+		
+		else {
 			List <Longueur> longueursThatMatchesWithResearch = new ArrayList<>();
-			for (Longueur longueur : longueurssWithVoieId) {
-				if(longueur.getLongueur_name().contains(mc)) {
+			for(Longueur longueur : longueurssWithVoieId) {
+				int indicatorThatlongueurIsAlreadyPut = 0;
+				String longueurId = String.valueOf(longueur.getLongueur_id());
+				if(longueurId.contains(mcLowerCase)) {
+					longueursThatMatchesWithResearch.add(longueur);
+					indicatorThatlongueurIsAlreadyPut++;
+				}
+				else if(longueur.getLongueur_name().toLowerCase().contains(mcLowerCase) && indicatorThatlongueurIsAlreadyPut == 0) {
+					longueursThatMatchesWithResearch.add(longueur);
+					indicatorThatlongueurIsAlreadyPut++;
+				}
+				else if (longueur.getLongueur_cotation().toLowerCase().contains(mcLowerCase) && indicatorThatlongueurIsAlreadyPut == 0){
 					longueursThatMatchesWithResearch.add(longueur);
 				}	
 			}
-			Page <Longueur> longueursPageList = new PageImpl<>(longueursThatMatchesWithResearch);
-			return longueursPageList;
+		Page <Longueur> longueursPageList = new PageImpl<>(longueursThatMatchesWithResearch);
+		return longueursPageList;
 		}
+	}
 
 
 	@Override

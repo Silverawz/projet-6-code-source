@@ -83,13 +83,16 @@ public class SpotController {
 	@RequestMapping(value={"/listespot"}, method=RequestMethod.GET)
 	public ModelAndView listeSpot(
 			@RequestParam(name="page", defaultValue= "0") int page,
-			@RequestParam(name="motCle", defaultValue= "") String mc) {
+			@RequestParam(name="motCle", defaultValue= "") String mc,
+			@RequestParam(name="choice", defaultValue= "everyspots") String choice
+			) {
 		ModelAndView modelView = new ModelAndView();
-		Page <Spot> spots = spotService.findBySpot_nameContains(mc, PageRequest.of(page, 10));
+		Page <Spot> spots = spotService.findBySpotContains(mc, PageRequest.of(page, 10), choice);
 		modelView.addObject("spotlist", spots.getContent());
 		modelView.addObject("pages",new int[spots.getTotalPages()]);
 		modelView.addObject("currentPage",page);
 		modelView.addObject("motCle", mc);
+		modelView.addObject("choice", choice);
 		modelView.setViewName("/spot/listespot");
 		return modelView;
 	}

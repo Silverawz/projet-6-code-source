@@ -4,6 +4,7 @@ package com.deroussen.service;
 
 import java.util.ArrayList;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +12,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 import com.deroussen.dao.SecteurRepository;
 import com.deroussen.entities.Secteur;
 
@@ -36,10 +36,6 @@ public class SecteurServiceImpl implements SecteurService {
 	}
 
 
-
-
-
-
 	@Override
 	public List<Secteur> findBySpotId(Long id) {
 		List <Secteur> secteurs = secteurRepository.findBySpotId(id);
@@ -56,42 +52,36 @@ public class SecteurServiceImpl implements SecteurService {
 
 
 	@Override
-	public Page<Secteur> findBySecteurnameContainsFromSpotId(Long id, String mc, Pageable page) {
+	public Page<Secteur> findBySecteurContainsFromSpotId(Long id, String motcle, Pageable page) {
+		String mcLowerCase = motcle.toLowerCase();
 		List <Secteur> secteursWithSpotId = secteurRepository.findBySpotId(id);
-		List <Secteur> secteursThatMatchesWithResearch = new ArrayList<>();
-		for (Secteur secteur : secteursWithSpotId) {
-			if(secteur.getSecteur_name().contains(mc)) {
-				secteursThatMatchesWithResearch.add(secteur);
-			}	
-		}
-		Page <Secteur> secteursPageList = new PageImpl<>(secteursThatMatchesWithResearch);
-		return secteursPageList;
-	}
-
-
-
-
-
-
-
+		if(motcle.equals("")) {
+			Page <Secteur> secteursPageList = new PageImpl<>(secteursWithSpotId);
+			return secteursPageList;
+		}	
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+		else {
+			List <Secteur> secteurThatMatchesWithResearch = new ArrayList<>();
+			for (Secteur secteur : secteursWithSpotId) {
+				int indicatorThatSecteurIsAlreadyPut = 0;
+				String secteurId = String.valueOf(secteur.getSecteur_id());
+				if(secteurId.contains(mcLowerCase)) {
+					secteurThatMatchesWithResearch.add(secteur);
+					indicatorThatSecteurIsAlreadyPut++;
+				}
+				else if(secteur.getSecteur_name().toLowerCase().contains(mcLowerCase) && indicatorThatSecteurIsAlreadyPut == 0) {
+					secteurThatMatchesWithResearch.add(secteur);
+					indicatorThatSecteurIsAlreadyPut++;
+				}
+				else if (indicatorThatSecteurIsAlreadyPut == 0){
+					String size = Integer.toString(secteur.getVoies().size());
+					if(size.contains(mcLowerCase)) {
+						secteurThatMatchesWithResearch.add(secteur);
+					}
+				}
+			}
+			Page <Secteur> secteursPageList = new PageImpl<>(secteurThatMatchesWithResearch);
+			return secteursPageList;
+		}
+	}
 }

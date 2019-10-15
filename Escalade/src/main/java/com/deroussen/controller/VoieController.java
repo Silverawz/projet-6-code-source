@@ -105,7 +105,7 @@ public class VoieController {
 			@RequestParam(name="page", defaultValue= "0") int page,
 			@RequestParam(name="motCle", defaultValue= "") String mc) {
 		ModelAndView modelView = new ModelAndView();
-		Page <Voie> voies = voieService.findByVoienameContainsFromSecteurId(secteurId, mc, PageRequest.of(page, 10));
+		Page <Voie> voies = voieService.findByVoieContainsFromSecteurId(secteurId, mc, PageRequest.of(page, 10));
 		Secteur secteur = secteurService.findById(secteurId);
 		Long spotId = secteurService.findById(secteurId).getSpot().getSpot_id();
 		Spot spot = spotService.findById(spotId);
