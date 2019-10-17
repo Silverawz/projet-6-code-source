@@ -23,7 +23,7 @@
 		</button>
 		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 			<div class="navbar-nav">
-				<a class="nav-item nav-link" th:href="@{/listespot}">Parcourir la liste des spots d'escalade</a>
+				<a class="nav-item nav-link" th:href="@{/listespot?choice=Tous+les+spots+%28peu+importe+si+équipé+ou+officiel%29&motCle=}">Parcourir la liste des spots d'escalade</a>
 				<a class="nav-item nav-link" th:href="@{/createspot}">Ajouter un spot d'escalade</a>
 				<a class="nav-item nav-link" th:href="@{/signup}">Creer un compte</a>
 				<a th:if="${userEmail == null}" class="nav-item nav-link" th:href="@{/login}">Se connecter</a>

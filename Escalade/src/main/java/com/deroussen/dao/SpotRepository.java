@@ -3,6 +3,7 @@ package com.deroussen.dao;
 import org.springframework.stereotype.Repository;
 
 
+
 import com.deroussen.entities.Spot;
 
 import java.util.List;
@@ -22,7 +23,6 @@ public interface SpotRepository extends JpaRepository <Spot, Long> {
 	
 	@Query("from Spot s where s.spot_id=?1")
 	Spot findByid(Long id);	
-	
 	
 	
 	@Query("from Spot s where s.is_equipped=?1")

@@ -6,10 +6,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
-
-
+import org.hibernate.mapping.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import com.deroussen.dao.SpotRepository;
 import com.deroussen.entities.Spot;
+import com.deroussen.entities.Voie;
 import com.deroussen.service.SpotService;
 import com.deroussen.service.UserService;
 
@@ -77,7 +78,7 @@ public class SpotController {
 				modelView.setViewName("redirect:/createsecteur?id="+spot.getSpot_id());
 			}
 			else {
-				modelView.setViewName("redirect:/listespot");
+				modelView.setViewName("redirect:/listespot?id="+spot.getSpot_id());
 			}
 		}	
 		return modelView;
@@ -87,14 +88,28 @@ public class SpotController {
 	public ModelAndView listeSpot(
 			@RequestParam(name="page", defaultValue= "0") int page,
 			@RequestParam(name="motCle", defaultValue= "") String mc,
-			@RequestParam(name="choice", defaultValue= "everyspots") String selector
+			@RequestParam(name="choice", defaultValue= "everyspots") String selector,
+			@RequestParam(name="id", defaultValue= "") Long spotId
 			) {
 		ModelAndView modelView = new ModelAndView();
-		List<String> listChoices = listOfChoices();	
-		String parameterToGetTheSpotResearch = comparingChoices(listChoices, selector);		
-		Page <Spot> spots = spotService.findBySpotContains(mc, PageRequest.of(page, 10), parameterToGetTheSpotResearch);
+		List<String> listChoices = new ArrayList<>();
+		Page <Spot> spots;
+		String parameterToGetTheSpotResearch;
+		if (spotId == null){
+			listChoices = listOfChoices();	
+			parameterToGetTheSpotResearch = comparingChoices(listChoices, selector);
+			spots = spotService.findBySpotContains(mc, PageRequest.of(page, 3), parameterToGetTheSpotResearch);			
+		}
+		else {
+			listChoices = listOfChoices();
+			Spot spot = spotService.findById(spotId);
+			List <Spot> spotsList = new ArrayList<>();
+			spotsList.add(spot);
+			spots = new PageImpl<>(spotsList);
+		}
+		
+		modelView.addObject("pages",new int[spots.getTotalPages()]);		
 		modelView.addObject("spotlist", spots.getContent());
-		modelView.addObject("pages",new int[spots.getTotalPages()]);
 		modelView.addObject("currentPage",page);
 		modelView.addObject("motCle", mc);
 		modelView.addObject("choices", listChoices);
@@ -136,7 +151,7 @@ public class SpotController {
 			spotUpdate.setIs_official(false);
 		}
 		spotRepository.save(spotUpdate);
-		modelView.setViewName("redirect:/listespot");
+		modelView.setViewName("redirect:/listespot?id="+spot.getSpot_id());
 		return modelView;
 	}
 	
@@ -185,16 +200,19 @@ public class SpotController {
 			parameterToGetTheSpot = "true_true";
 		}
 		else if(selector.equals(list.get(2))) {
-			parameterToGetTheSpot = "true_false";
+			parameterToGetTheSpot = "false_true";
 		}
 		else if(selector.equals(list.get(3))) {
-			parameterToGetTheSpot = "false_true";
+			parameterToGetTheSpot = "true_false";
 		}
 		else if(selector.equals(list.get(4))){
 			parameterToGetTheSpot = "false_false";
 		}	
 		return parameterToGetTheSpot;
 	}
+	
+
+	
 }
 
 

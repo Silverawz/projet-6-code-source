@@ -71,11 +71,20 @@
 					</table>
 
 					<ul class="nav nav-pills">
-						<li th:class="${currentPage==status.index}?'active':''"
-							th:each="page,status:${pages}"><a
-							onclick="return confirm(Etes vous sur ?'')"
-							th:href="@{/listespot(page=${status.index}, motCle=${motCle})}"
-							th:text="${status.index}"></a></li>
+						
+						
+	
+
+					<!--  
+					
+					
+					 
+						<li th:class="${currentPage==status.index}?'active':''" 
+						th:each="page,status:${index}">
+	
+						 <a onclick="return confirm(Etes vous sur ?'')" 
+						th:href="@{/listespot(page=${status.index}, motCle=${motCle})}" 
+						th:text="${status.index}"></a></li>-->
 					</ul>
 				</div>
 			</div>

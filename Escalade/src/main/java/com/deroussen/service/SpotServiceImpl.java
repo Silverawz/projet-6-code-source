@@ -9,11 +9,13 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.deroussen.dao.SpotRepository;
 import com.deroussen.entities.Spot;
+import com.deroussen.entities.Voie;
 
 @Service("spotService")
 public class SpotServiceImpl implements SpotService {
@@ -128,7 +130,7 @@ public class SpotServiceImpl implements SpotService {
 		return spotsList;	
 	}
 
-
+	
 	
 	
 }

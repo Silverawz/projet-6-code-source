@@ -35,4 +35,10 @@ public class UserServiceImpl implements UserService {
 		userRepository.save(user);
 	}
 
+	@Override
+	public User findByUserId(Long id) {
+		return userRepository.findByUserId(id);
+	}
+
+
 }
