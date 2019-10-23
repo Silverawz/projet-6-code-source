@@ -15,7 +15,7 @@
 </head>
 <body>
 	<nav class="navbar navbar-expand-lg navbar-light bg-light">
-		<a class="navbar-brand" th:href="@{/}">Les amis de l'escalade</a>
+		<a class="navbar-brand" th:href="@{/welcome/welcomepage}">Les amis de l'escalade</a>
 		<button class="navbar-toggler" type="button" data-toggle="collapse"
 			data-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup"
 			aria-expanded="false" aria-label="Toggle navigation">
@@ -24,11 +24,13 @@
 		<div class="collapse navbar-collapse" id="navbarNavAltMarkup">
 			<div class="navbar-nav">
 				<a class="nav-item nav-link" th:href="@{/listespot?choice=Tous+les+spots+%28peu+importe+si+équipé+ou+officiel%29&motCle=}">Parcourir la liste des spots d'escalade</a>
-				<a class="nav-item nav-link" th:href="@{/createspot}">Ajouter un spot d'escalade</a>
-				<a class="nav-item nav-link" th:href="@{/signup}">Creer un compte</a>
+				<a th:if="${userEmail != null}" class="nav-item nav-link" th:href="@{/createspot}">Ajouter un spot d'escalade</a>
+				<a class="nav-item nav-link" th:href="@{/listetopo}">Parcourir la liste des topos</a>
+				<a th:if="${userEmail != null}" class="nav-item nav-link" th:href="@{/createtopo}">Ajouter un topo</a>
+				<a th:if="${userEmail != null}" class="nav-item nav-link" th:href="@{/signup}">Creer un compte</a>
 				<a th:if="${userEmail == null}" class="nav-item nav-link" th:href="@{/login}">Se connecter</a>
 				<a th:if="${userEmail != null}" class="nav-item nav-link" th:href="@{/logout}">Se deconnecter</a>
-				<a th:if="${userEmail != null}" class="nav-item nav-link" th:text="${userEmail}"></a>
+				<a th:if="${userEmail != null}" class="nav-item nav-link" th:href="@{/personalpage}" th:text="${userEmail}"></a>
 			</div>
 		</div>
 	</nav>

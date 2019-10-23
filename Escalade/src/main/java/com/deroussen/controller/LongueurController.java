@@ -165,7 +165,7 @@ public class LongueurController {
 			modelView.addObject("secteur_name", secteur.getSecteur_name() );
 			modelView.addObject("secteur_id", secteur.getSecteur_id());
 			modelView.addObject("userThatCreateTheSpot", spot.getUser().getEmail());
-			modelView.addObject("void_id", voieId);
+			modelView.addObject("voie_id", voieId);
 			modelView.addObject("voie_name", voie.getVoie_name());
 			modelView.addObject("voie_cotation", voie.getVoie_cotation());
 			modelView.addObject("longueur_id", longueurId);

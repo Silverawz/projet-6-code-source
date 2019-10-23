@@ -2,11 +2,9 @@ package com.deroussen.controller;
 
 
 import java.util.ArrayList;
+
 import java.util.List;
-
 import javax.validation.Valid;
-
-import org.hibernate.mapping.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import com.deroussen.dao.SpotRepository;
 import com.deroussen.entities.Spot;
-import com.deroussen.entities.Voie;
 import com.deroussen.service.SpotService;
 import com.deroussen.service.UserService;
 
