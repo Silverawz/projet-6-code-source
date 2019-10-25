@@ -1,11 +1,9 @@
 package com.deroussen.controller;
 
 import java.lang.reflect.Array;
+
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -15,7 +13,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -100,8 +97,8 @@ public class UserController {
 			int size = userService.findReservationUserIdWithTopoId(topo.getTopo_id()).size(); // WORK result excpected = (1,0,0)			
 			if(size != 0) {		
 				for(int i = 0; i < size; i++) {	
-					grande_liste_de_tout.add(userService.findByUserId(userService.findReservationUserIdWithTopoId(topo.getTopo_id()).get(i)).getEmail()+
-					" vous demande une réservation pour le topo :"+topo.getTopo_name()+" ayant l'id : "+topo.getTopo_id());	
+					grande_liste_de_tout.add(userService.findByUserId(userService.findReservationUserIdWithTopoId
+					(topo.getTopo_id()).get(i)).getEmail()+" vous demande une réservation pour le topo : "+topo.getTopo_name());	
 				}
 			}	
 		}
@@ -111,44 +108,47 @@ public class UserController {
 	}
 	
 	
-	@RequestMapping(value={"/reservationaccepted"}, method=RequestMethod.GET)
+	@RequestMapping(value={"/reservationaccepted"}, method=RequestMethod.POST)
 	public ModelAndView reservationAccepted(@SessionAttribute("userEmail") String userEmail,
-			@RequestParam(name="information") String information
+			@RequestParam(name="e") String informationContainingUserEmailAndTopoName
 			) {
 		ModelAndView modelView = new ModelAndView();
-		
-		
-		
-		
-		modelView.setViewName("user/personalpage");
+		String[] split = informationContainingUserEmailAndTopoName.split(" vous demande une réservation pour le topo : ");
+		Object userWhoWantReservationEmailObject = Array.get(split,0);	
+		String userWhoWantReservationEmail = (String)userWhoWantReservationEmailObject;
+		Object topoNameObject = Array.get(split,1);   
+		String topoName = (String)topoNameObject;
+		// delete the row that matches with topo id and user id
+		Long userId = userService.findUserByEmail(userWhoWantReservationEmail).getId();
+		deleteReservationRow(topoService.findByTopoName(topoName).getTopo_id(), userId);
+		Topo topo = topoService.findByTopoName(topoName);
+		topo.setIs_available(false);
+		topo.setUserReservingTheTopo(userService.findUserByEmail(userWhoWantReservationEmail));
+		topoService.saveTopo(topo);
+		modelView.setViewName("redirect:/personalpage");
 		return modelView;
 	}
 	
 	
 	@RequestMapping(value={"/reservationdeclined"}, method=RequestMethod.POST)
 	public ModelAndView reservationDeclined(@SessionAttribute("userEmail") String userEmail,
-			@RequestParam(name="e") String information
+			@RequestParam(name="e") String informationContainingUserEmailAndTopoName
 			) {
 		ModelAndView modelView = new ModelAndView();
-		String split[] = information.split(" vous demande une réservation pour le topo : ");
-		Object string = Array.get(split,0);	
-		Object string1 = Array.get(split,1);
-		String split1[] = ((String) string1).split(" ayant l'id : ");
-		Object string2 = Array.get(split1,0);
-		Object string3 = Array.get(split1,1);
-		String userWhoWantReservationEmail = (String)string;
-		String topoName = (String)string2;
-		String topoId = (String)string3;
-		
-		System.out.println(userWhoWantReservationEmail);
-		System.out.println(topoName);
-		System.out.println(topoId);
-		
-		
-		
-		modelView.setViewName("user/personalpage");
+		String[] split = informationContainingUserEmailAndTopoName.split(" vous demande une réservation pour le topo : ");
+		Object userWhoWantReservationEmailObject = Array.get(split,0);	
+		String userWhoWantReservationEmail = (String)userWhoWantReservationEmailObject;
+		Object topoNameObject = Array.get(split,1);   
+		String topoName = (String)topoNameObject;
+		// delete the row that matches with topo id and user id
+		deleteReservationRow(topoService.findByTopoName(topoName).getTopo_id(), userService.findUserByEmail(userWhoWantReservationEmail).getId());
+		modelView.setViewName("redirect:/personalpage");
 		return modelView;
 	}
 	
 	
+	
+	public void deleteReservationRow(Long topoId, Long userId) {
+		topoService.cancelReservationRequest(topoId, userId);	
+	}
 }

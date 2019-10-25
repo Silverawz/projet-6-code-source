@@ -72,6 +72,12 @@ public class LongueurServiceImpl implements LongueurService {
 	public Longueur findByid(Long id) {
 		return longueurRepository.findByid(id);
 	}
+
+
+	@Override
+	public Longueur findByLongueur_name(String name) {
+		return longueurRepository.findByLongueur_name(name);
+	}
 }
 
 

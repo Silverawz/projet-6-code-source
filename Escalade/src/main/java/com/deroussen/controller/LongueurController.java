@@ -185,11 +185,23 @@ public class LongueurController {
 			) {
 		ModelAndView modelView = new ModelAndView();
 		Longueur longueurUpdate = longueurRepository.getOne(longueur.getLongueur_id());
-		longueurUpdate.setLongueur_name(longueur.getLongueur_name());
-		longueurUpdate.setLongueur_cotation(longueur.getLongueur_cotation());
-		longueurRepository.save(longueurUpdate);
+		Longueur longueurResearchByName = longueurRepository.findByLongueur_name(longueur.getLongueur_name());
+		Long idVerificationLongueurrResearched = (long) -1;
+		if(longueurResearchByName != null) {
+			idVerificationLongueurrResearched = longueurResearchByName.getLongueur_id();
+		}
+		Long idVerificationSecteurUpdated = longueur.getLongueur_id(); 
 		Long voidId = longueurUpdate.getVoie().getVoie_id();
-		modelView.setViewName("redirect:/listelongueur?id="+voidId);
+		// if both id corresponds then the name hasn't been changed but other informations may have been
+		if(longueurResearchByName == null || idVerificationLongueurrResearched.equals(idVerificationSecteurUpdated)) {
+			longueurUpdate.setLongueur_name(longueur.getLongueur_name());
+			longueurUpdate.setLongueur_cotation(longueur.getLongueur_cotation());
+			longueurRepository.save(longueurUpdate);
+			modelView.setViewName("redirect:/listelongueur?id="+voidId);
+		}
+		else {
+			modelView.setViewName("redirect:/listelongueur?id="+voidId);
+		}
 		return modelView;
 	}
 	

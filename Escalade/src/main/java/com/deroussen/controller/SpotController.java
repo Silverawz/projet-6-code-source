@@ -134,21 +134,34 @@ public class SpotController {
 			) {
 		ModelAndView modelView = new ModelAndView();
 		Spot spotUpdate = spotRepository.getOne(spot.getSpot_id());
-		spotUpdate.setSpot_name(spot.getSpot_name());
-		if(spot.isIs_equipped() == true) {
-			spotUpdate.setIs_equipped(true);
+		Spot spotResearchByName = spotRepository.findBySpot_name(spot.getSpot_name());
+		Long idVerificationSpotResearched = (long) -1;
+		if(spotResearchByName != null) {
+			idVerificationSpotResearched = spotResearchByName.getSpot_id();
+		}	
+		Long idVerificationSpotUpdated = spot.getSpot_id();
+		// if both id corresponds then the name hasn't been changed but other informations may have been
+		if(spotRepository.findBySpot_name(spot.getSpot_name()) == null || idVerificationSpotResearched.equals(idVerificationSpotUpdated)) {	
+			spotUpdate.setSpot_name(spot.getSpot_name());
+			spotUpdate.setSpot_lieu(spot.getSpot_lieu());
+			if(spot.isIs_equipped() == true) {
+				spotUpdate.setIs_equipped(true);
+			}
+			else {
+				spotUpdate.setIs_equipped(false);
+			}
+			if(spot.isIs_official() == true) {
+				spotUpdate.setIs_official(true);
+			}
+			else {
+				spotUpdate.setIs_official(false);
+			}			
+			spotRepository.save(spotUpdate);
+			modelView.setViewName("redirect:/listespot?id="+spot.getSpot_id());		
 		}
 		else {
-			spotUpdate.setIs_equipped(false);
-		}
-		if(spot.isIs_official() == true) {
-			spotUpdate.setIs_official(true);
-		}
-		else {
-			spotUpdate.setIs_official(false);
-		}
-		spotRepository.save(spotUpdate);
-		modelView.setViewName("redirect:/listespot?id="+spot.getSpot_id());
+			modelView.setViewName("redirect:/listespot?id="+spot.getSpot_id());
+		}		
 		return modelView;
 	}
 	

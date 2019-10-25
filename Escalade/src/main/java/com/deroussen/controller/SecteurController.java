@@ -1,17 +1,13 @@
 package com.deroussen.controller;
 
 
-import java.util.ArrayList;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +19,8 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.deroussen.dao.SecteurRepository;
-import com.deroussen.dao.SpotRepository;
 import com.deroussen.entities.Secteur;
 import com.deroussen.entities.Spot;
-import com.deroussen.entities.User;
-import com.deroussen.entities.Voie;
 import com.deroussen.service.SecteurService;
 import com.deroussen.service.SpotService;
 
@@ -41,8 +34,6 @@ public class SecteurController {
 	private SecteurService secteurService;
 	@Autowired
 	private SpotService spotService;
-	@Autowired
-	private SpotRepository spotRepository;	
 
 	
 	
@@ -162,11 +153,23 @@ public class SecteurController {
 	public ModelAndView changeSecteurPost(@Valid Secteur secteur, BindingResult bindingResult
 			) {
 		ModelAndView modelView = new ModelAndView();
-		Secteur secteurUpdate = secteurRepository.getOne(secteur.getSecteur_id());
-		secteurUpdate.setSecteur_name(secteur.getSecteur_name());
-		secteurRepository.save(secteurUpdate);
-		Long spotId = secteurUpdate.getSpot().getSpot_id();	
-		modelView.setViewName("redirect:/listesecteur?id="+spotId);
+		Secteur secteurUpdate = secteurRepository.getOne(secteur.getSecteur_id());	
+		Secteur secteurResearchByName = secteurRepository.findBySecteur_name(secteur.getSecteur_name());
+		Long idVerificationSecteurResearched = (long) -1;
+		if(secteurResearchByName != null) {
+			idVerificationSecteurResearched = secteurResearchByName.getSecteur_id();
+		}
+		Long idVerificationSecteurUpdated = secteur.getSecteur_id();
+		Long spotId = secteurUpdate.getSpot().getSpot_id();
+		// if both id corresponds then the name hasn't been changed but other informations may have been
+		if(secteurResearchByName == null || idVerificationSecteurResearched.equals(idVerificationSecteurUpdated)) {
+			secteurUpdate.setSecteur_name(secteur.getSecteur_name());		
+			secteurRepository.save(secteurUpdate);	
+			modelView.setViewName("redirect:/listesecteur?id="+spotId);
+		}
+		else {
+			modelView.setViewName("redirect:/listesecteur?id="+spotId);
+		}
 		return modelView;
 	}
 	

@@ -76,6 +76,14 @@ public class VoieServiceImpl implements VoieService {
 		}
 	}
 
+
+
+
+	@Override
+	public Voie findByVoie_name(String name) {
+		return voieRepository.findByVoie_name(name);
+	}
+
 	
 	
 	

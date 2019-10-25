@@ -12,7 +12,8 @@ import com.deroussen.entities.Longueur;
 @Repository("longueurRepository")
 public interface LongueurRepository extends JpaRepository <Longueur, Long> {
 	
-	
+	@Query("from Longueur s where s.longueur_name=?1")
+	Longueur findByLongueur_name(String name);
 	
 	@Query("from Longueur where voie_voie_id=?1")
 	List<Longueur> findByVoieId(Long id);

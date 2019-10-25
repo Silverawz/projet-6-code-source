@@ -15,6 +15,7 @@ public interface VoieRepository extends JpaRepository <Voie, Long> {
 	@Query("from Voie where secteur_secteur_id=?1")
 	List<Voie> findBySecteurId(Long id);
 
-	
+	@Query("from Voie s where s.voie_name=?1")
+	Voie findByVoie_name(String name);
 
 }

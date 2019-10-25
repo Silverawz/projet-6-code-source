@@ -156,7 +156,6 @@ public class VoieController {
 		Secteur secteur = secteurService.findById(secteurId);
 		Long spotId = secteur.getSpot().getSpot_id();
 		Spot spot = spotService.findById(spotId);
-		System.out.println(voieId);
 		if(spot.getUser().getEmail().equals(userEmail)){
 			modelView.addObject("spot_name", spot.getSpot_name());
 			modelView.addObject("spot_id", spot.getSpot_id());
@@ -181,11 +180,23 @@ public class VoieController {
 			) {
 		ModelAndView modelView = new ModelAndView();
 		Voie voidUpdate = voieRepository.getOne(voie.getVoie_id());
-		voidUpdate.setVoie_name(voie.getVoie_name());
-		voidUpdate.setVoie_cotation(voie.getVoie_cotation());
-		voieRepository.save(voidUpdate);
+		Voie voieResearchByName = voieRepository.findByVoie_name(voie.getVoie_name());
 		Long secteurId = voidUpdate.getSecteur().getSecteur_id();
-		modelView.setViewName("redirect:/listevoie?id="+secteurId);
+		Long idVerificationVoieResearched = (long) -1;
+		if(voieResearchByName != null) {
+			idVerificationVoieResearched = voieResearchByName.getVoie_id();
+		}
+		Long idVerificationVoierUpdated = voie.getVoie_id();
+		// if both id corresponds then the name hasn't been changed but other informations may have been
+		if(voieResearchByName == null || idVerificationVoieResearched.equals(idVerificationVoierUpdated)) {
+			voidUpdate.setVoie_name(voie.getVoie_name());
+			voidUpdate.setVoie_cotation(voie.getVoie_cotation());
+			voieRepository.save(voidUpdate);
+			modelView.setViewName("redirect:/listevoie?id="+secteurId);
+		}
+		else {
+			modelView.setViewName("redirect:/listevoie?id="+secteurId);
+		}
 		return modelView;
 	}
 	
