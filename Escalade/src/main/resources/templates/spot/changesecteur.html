@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="utf-8">
+<title>Formulaire de modification d'un secteur</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div th:if="${userEmail != null}">
+			<div class="col-md-6">
+				<form th:action="@{/changesecteur}" method="post">	
+				
+						<div class="form-group">
+							<label class="control-label">ID du spot :       </label> 
+								<input class="form-control" type="text" name="spot_id" th:value="${spot_id}" readonly="readonly"/>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label">Lieu du spot :       </label> 
+								<input class="form-control" type="text" name="spot_lieu" th:value="${spot_lieu}" readonly="readonly"/>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label">Nom du spot :       </label> 
+								<input class="form-control" type="text" name="spot_name" th:value="${spot_name}" readonly="readonly"/>
+						</div>
+							
+						<div class="form-group">
+							<label class="control-label">ID du secteur :       </label> 
+								<input class="form-control" type="text" name="secteur_id" th:value="${secteur_id}" readonly="readonly"/>
+						</div>
+																									
+						<div class="form-group">
+							<label class="control-label">Nom du secteur :       </label> 
+								<input class="form-control" type="text" name="secteur_name" th:value="${secteur_name}" pattern="[A-Za-z]{3,30}" required>
+						</div>			
+											
+						<button type="submit" class="btn btn-primary">Modifier le secteur</button>
+				</form>
+			</div>
+		</div>
+	</div>
+		<div th:if="${userEmail == null}">
+			<br><br><br>
+			<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Il est nécessaire de posséder un compte pour effectuer cette action et d'être connecté.</h1>
+		</div>
+</body>
+</html>

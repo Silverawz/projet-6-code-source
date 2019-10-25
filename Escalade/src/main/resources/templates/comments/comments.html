@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="utf-8">
+<title>Liste des commentaires</title>
+<!-- HTML Codes by Quackit.com -->
+<style type="text/css">
+textarea.html-text-box {background-color:#ffffff;background-image:url(http://);background-repeat:no-repeat;
+background-attachment:fixed;border-width:1;border-style:solid;border-color:#cccccc;font-family:Arial;font-size:12pt;color:#000000;}
+input.html-text-box {background-color:#000000;font-family:Arial;font-size:14pt;color:#FFFFFF;}
+</style>
+</head>
+<body>
+	<div layout:fragment="content">	
+	<div class="container">
+		<div th:if="${userEmail != null}">		
+				<div class="panel panel-primary">
+					<div class="panel-body">	
+						<div class="panel-heading">Ecrire un commentaire pour ce spot</div>
+						
+						
+						<form method="post" th:action="@{/createcommentaire(id=${spotId})}">
+							<textarea name="description" th:value="description" cols="60" rows="5" class="html-text-box"></textarea>
+							<br>
+							<input type="submit" name="envoyer" value="envoyer" class="html-text-box">
+							<input type="reset" value="Reset" class="html-text-box">
+						</form>
+						
+						<!--
+						<form th:action="@{/ajoutercommentaire(id=${spotId}, user=${userEmail})}" method="post">
+						<textarea name="comments" cols="30" rows="5" class="html-text-box">
+						Comments here...</textarea><br>
+						
+						
+						<input type="submit" value="Submit" class="html-text-box">
+						<input type="reset" value="Reset" class="html-text-box"></form> -->	
+						
+					</div>
+					<br>
+				</div>						
+			</div>		
+			<div th:if="${userEmail == null}">
+				<p>Connectez-vous pour écrire un commentaire</p>
+			</div>		
+			
+			<div class="panel-body">
+					<table class="table">
+						<tr>
+							<th>ID du commentaire</th>
+							<th>Auteur du commentaire</th>
+							<th>Description du commentaire</th>
+						</tr>
+						<tr th:each="c:${commentaires}">
+							<td th:text=${c.commentaire_id}></td>
+							<td th:text=${c.getUser().getFirstname()}></td>
+							<td th:text=${c.commentaire_description}></td>
+							
+
+							<td th:if="${userEmail == c.getUser().getEmail()}">
+							<a th:href="@{/changecomment(id=${c.commentaire_id})}">
+							Modifier le commentaire</a>
+							</td>
+							
+							<td th:if="${userEmail == c.getUser().getEmail()}">
+							<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletecommentaire(id=${c.commentaire_id})}">
+							Supprimer le commentaire</a>
+							</td>
+
+						</tr>
+					</table>
+				</div>
+			</div>
+	</div>
+</body>
+</html>

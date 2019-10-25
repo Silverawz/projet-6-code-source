@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="utf-8">
+<title>Modification du commentaire</title>
+<style type="text/css">
+textarea.html-text-box {background-color:#ffffff;background-image:url(http://);background-repeat:no-repeat;
+background-attachment:fixed;border-width:1;border-style:solid;border-color:#cccccc;font-family:Arial;font-size:12pt;color:#000000;}
+input.html-text-box {background-color:#000000;font-family:Arial;font-size:14pt;color:#FFFFFF;}
+</style>
+</head>
+<body>
+	<div layout:fragment="content">	
+	
+	
+	<div class="container">
+		  <div th:if="${userEmail != null}">	
+		  	<div th:if="${userEmail == madeByUser}">	
+				<div class="panel panel-primary">
+					<div class="panel-body">	
+						<div class="panel-heading">Modifier le commentaire</div>
+						
+						
+						<form method="post" th:action="@{/changecomment(id=${commentaire_id})}">
+							<textarea name="description" th:value="description" th:text="${description}" cols="60" rows="5" class="html-text-box">		
+							</textarea>
+							<br>
+							<input type="submit" name="envoyer" value="envoyer" class="html-text-box">
+							<input type="reset" value="Reset" class="html-text-box">
+						</form>
+						
+						
+						<!--  
+						<form th:action="@{/ajoutercommentaire(id=${spotId}, user=${userEmail})}" method="post">
+						<textarea name="comments" cols="30" rows="5" class="html-text-box">
+						Comments here...</textarea><br>
+						
+						
+						<input type="submit" value="Submit" class="html-text-box">
+						<input type="reset" value="Reset" class="html-text-box"></form>  -->
+						
+					</div>
+					<br>
+				</div>						
+			 </div>	
+			</div>	
+			
+			<div th:if="${userEmail == null}">	
+				<div th:if="${userEmail != madeByUser">	
+					<h1>Error !</h1>
+				</div>
+			</div>	
+		</div> 		
+	</div>
+</body>
+</html>

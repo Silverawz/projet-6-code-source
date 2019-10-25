@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<title>Home</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="container">
+		
+			<div th:if="${userEmail != null}"> 
+				<h1>
+					Bienvenue sur la page d'accueil <span th:utext="${userEmail}"></span>  !		
+				</h1>
+				<a th:href="@{/logout}">Sign out</a>
+			</div>
+			
+			<div th:if="${userEmail == null}"> 
+				<h1>
+					Bienvenue sur la page d'accueil !		
+				</h1>
+			</div>
+			
+			
+			</div>		
+		</div>
+</body>
+</html>

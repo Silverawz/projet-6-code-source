@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="utf-8">
+<title>Formulaire de modification d'un topo</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div th:if="${userEmail != null and userEmail == topo_madeByUser_email}">
+			<div class="col-md-6">
+				<form th:action="@{/changetopo}" method="post">		
+	
+						<div class="form-group">
+							<label class="control-label">Id du topo :       </label> 
+								<input class="form-control" type="text" name="topo_id" th:value="${topo_id}" readonly="readonly"/>
+						</div>
+						
+																						
+						<div class="form-group">
+							<label class="control-label">Nom du topo :       </label> 
+								<input class="form-control" type="text" name="topo_name" th:value="${topo_name}" pattern="[A-Za-z]{3,30}" required>
+						</div>
+						
+						<div class="form-group">
+							<label class="control-label">Lieu :       </label> 
+								<input class="form-control" type="text" name="topo_lieu" th:value="${topo_lieu}" pattern="[A-Za-z]{3,30}" required>
+							</div>
+							
+						<div class="form-group">
+							<label class="control-label">Description :       </label> 
+								<input class="form-control" type="text" name="topo_description" th:value="${topo_description}" pattern="[A-Za-z]{10,255}" required>
+						</div>	
+						
+						<div class="form-group">
+							<label class="control-label">Date de parution (Format: DD.MM.YYYY):       </label> 
+								<input class="form-control" type="text" name="topo_date_parution" th:value="${topo_date_parution}" 
+								pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}" required>
+						</div>
+						
+						<div class="form-group">
+							<label for="control-label">Disponibilité</label>
+								<select name="is_available" id="is_available">
+									<option selected="selected" value="true">disponible</option>
+									<option value="false">indisponible</option>
+								</select>
+						</div>							
+						<button type="submit" class="btn btn-primary">Modifier le topo</button>
+				</form>
+			</div>
+		</div>
+				<div th:if="${userEmail == null}">
+			<br><br><br>
+			<h1>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Il est nécessaire de posséder un compte pour effectuer cette action et d'être connecté.</h1>
+		</div>
+			
+	</div>
+
+</body>
+</html>

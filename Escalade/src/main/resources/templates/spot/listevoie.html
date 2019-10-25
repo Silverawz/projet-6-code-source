@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="utf-8">
+<title>Liste des voies</title>
+</head>
+<body>
+	<div layout:fragment="content">	
+			<div class="container">
+				<div class="panel panel-primary">
+							<div class="panel-body">
+								<form th:action="@{/listevoie}" method="get">
+									<input type="hidden" name="id"  th:value="${secteur_id}">
+									<label>Mot clé :</label> <input type="text" name="motCle" th:value="${motCle}">
+									<button type="submit" class="btn btn-primary">Chercher</button>
+								</form>
+							</div>
+						<h6>Nom du spot :   <a th:href="@{/listespot(id=${spot_id})}" th:text="${spot_name}"></a></h6>
+						<h6>Lieu du spot :   <span th:text="${spot_lieu}"></span></h6>
+						<h6>ID du spot :   <span th:text="${spot_id}"></span></h6>
+						<h6>Nom du secteur :   <a th:href="@{/listesecteur(id=${spot_id})}" th:text="${secteur_name}"></a></h6>
+						<h6>ID du secteur :   <span th:text="${secteur_id}"></span></h6>
+						
+						<div th:if="${userEmail == userThatCreateTheSpot}">
+						<a th:href="@{/createvoie(id=${secteur_id})}">
+						Ajouter une nouvelle voie au secteur</a>
+						</div><br>
+							
+					<div class="panel-body">
+						<table class="table">
+							<tr>
+								<th>ID de la voie</th>
+								<th>Nom de la voie</th>
+								<th>Cotation de la voie</th>
+								<th>Nombre de longueur(s)</th>
+							</tr>
+							<tr th:each="s:${voielist}">
+							
+								<td th:text=${s.voie_id}></td>
+								<td th:text=${s.voie_name}></td>
+								<td th:text=${s.voie_cotation}></td>
+								<td th:text=${s.getLongueurs().size()}></td>
+								<td><a th:href="@{/listelongueur(id=${s.voie_id})}">
+								Voir la/les(s) longueur(s) de cette voie</a>
+								</td>
+								<td th:if="${userEmail == userThatCreateTheSpot}">
+								<a th:href="@{/createlongueur(id=${s.voie_id})}">
+								Ajouter une longueur</a>
+								</td>
+								<td th:if="${userEmail == userThatCreateTheSpot}">
+								<a th:href="@{/changevoie(id=${s.voie_id})}">
+								Modifier la voie</a>
+								</td>
+								<td th:if="${userEmail == userThatCreateTheSpot}">
+								<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletevoie(id=${s.voie_id}, page=${currentPage}, motCle=${motCle})}">
+								Supprimer la voie</a>
+								</td>
+								
+							</tr>
+						</table>
+	
+						<ul class="nav nav-pills">
+							<li th:class="${currentPage==status.index}?'active':''"
+								th:each="page,status:${pages}"><a
+								onclick="return confirm(Etes vous sur ?'')"
+								th:href="@{/listespot(page=${status.index}, motCle=${motCle})}"
+								th:text="${status.index}"></a></li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+</body>
+</html>
