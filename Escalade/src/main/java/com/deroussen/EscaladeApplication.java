@@ -7,9 +7,19 @@ package com.deroussen;
 
 
 
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+import com.deroussen.dao.SpotRepository;
+import com.deroussen.dao.UserRepository;
+import com.deroussen.entities.Role;
+import com.deroussen.entities.Spot;
+import com.deroussen.entities.User;
 
 
 
@@ -18,9 +28,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class EscaladeApplication implements CommandLineRunner {
 	
-	
-
-	
+	@Autowired
+	private UserRepository userRepository;
+	@Autowired
+	private SpotRepository spotRepository;
 	
 	public static void main(String[] args) {
 		SpringApplication.run(EscaladeApplication.class, args);
@@ -30,6 +41,18 @@ public class EscaladeApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
+		
+		/*
+		for(int i = 0; i < 12; i++) {
+			String spotname = "name"+i;
+			String spotlieu = "lieu"+i;
+			boolean equipped = true;
+			boolean official = false;
+			User user = userRepository.findByUserId((long) 1);
+			Spot spot = new Spot(spotname,spotlieu,equipped,official,user);
+			spotRepository.save(spot);
+		}
+		*/
 		/*
 		//creation de l'admin
 		Utilisateur admin = new Utilisateur(null, "Admin","Admin","nico@live.fr","123456",true);

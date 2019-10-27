@@ -2,8 +2,9 @@ package com.deroussen.controller;
 
 
 import java.util.ArrayList;
-
 import java.util.List;
+import java.util.Set;
+
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 import com.deroussen.dao.SpotRepository;
+import com.deroussen.entities.Role;
 import com.deroussen.entities.Spot;
+import com.deroussen.entities.User;
 import com.deroussen.service.SpotService;
 import com.deroussen.service.UserService;
 
@@ -62,12 +65,7 @@ public class SpotController {
 			else {
 				spot.setIs_equipped(false);
 			}
-			if(spot.isIs_official() == true) {
-				spot.setIs_official(true);
-			}
-			else {
-				spot.setIs_official(false);
-			}
+			spot.setIs_official(false);		
 			spot.setUser(userService.findUserByEmail(userEmail));
 			spotService.saveSpot(spot);
 			// model.addObject("msg","The spot has been created successfully!"); // TODO
@@ -86,7 +84,8 @@ public class SpotController {
 			@RequestParam(name="page", defaultValue= "0") int page,
 			@RequestParam(name="motCle", defaultValue= "") String mc,
 			@RequestParam(name="choice", defaultValue= "everyspots") String selector,
-			@RequestParam(name="id", defaultValue= "") Long spotId
+			@RequestParam(name="id", defaultValue= "") Long spotId,
+			@SessionAttribute(required=false, name="userEmail") String userEmail
 			) {
 		ModelAndView modelView = new ModelAndView();
 		List<String> listChoices = new ArrayList<>();
@@ -104,7 +103,22 @@ public class SpotController {
 			spotsList.add(spot);
 			spots = new PageImpl<>(spotsList);
 		}
-		
+		if(userEmail != null) {
+			User user = userService.findUserByEmail(userEmail);
+			Set<Role> userRoles = user.getRoles();
+			boolean isAMember = false;	
+			C:for (Role role : userRoles) {
+				if(role.getRole().equals("MEMBER") || role.getRole().equals("ADMIN")) {
+					isAMember = true;
+				}
+				if(isAMember == true) {
+					break C;
+				}
+			}			
+			if(isAMember) {
+			modelView.addObject("role","MEMBER");			
+			}
+		}
 		modelView.addObject("pages",new int[spots.getTotalPages()]);		
 		modelView.addObject("spotlist", spots.getContent());
 		modelView.addObject("currentPage",page);
@@ -114,7 +128,8 @@ public class SpotController {
 		modelView.setViewName("/spot/listespot");
 		return modelView;
 	}
-	                                                           
+	  
+	
 	@RequestMapping(value={"/changespot"}, method=RequestMethod.GET)
 	public ModelAndView changeSpotGet(@RequestParam(name="id") Long spotId) {
 		ModelAndView modelView = new ModelAndView();
@@ -174,7 +189,7 @@ public class SpotController {
 		ModelAndView modelView = new ModelAndView();
 		if(spotService.findById(spotId).getUser().getEmail().equals(userEmail)) {
 			spotRepository.deleteById(spotId);	
-			modelView.setViewName("redirect:/listespot?page="+page+"&motCle="+motCle);
+			modelView.setViewName("redirect:/listespot");
 		}
 		else {
 			modelView.setViewName("errors/access_denied");
@@ -184,6 +199,38 @@ public class SpotController {
 	}
 	
 	
+	@RequestMapping(value={"/spotofficiel"}, method=RequestMethod.GET)
+	public ModelAndView spotBecomeOfficialOrNot(@RequestParam(name="id") Long spotId,
+			String motCle, int page,
+			@SessionAttribute("userEmail") String userEmail) {
+		ModelAndView modelView = new ModelAndView();
+		User user = userService.findUserByEmail(userEmail);
+		Set<Role> userRoles = user.getRoles();
+		boolean isAMember= false;
+		C:for (Role role : userRoles) {
+			if(role.getRole().equals("MEMBER") || role.getRole().equals("ADMIN")) {
+				isAMember = true;
+			}
+			if(isAMember == true) {
+				break C;
+			}
+		}		
+		if(isAMember) {
+			Spot spot = spotRepository.findByid(spotId);
+			if(spot.isIs_official() == true) {
+				spot.setIs_official(false);
+			}
+			else {
+				spot.setIs_official(true);
+			}			
+			spotRepository.save(spot);
+			modelView.setViewName("redirect:/listespot");
+		}
+		else {
+			modelView.setViewName("errors/access_denied");
+		}	
+		return modelView;
+	}
 
 	public List<String> listOfChoices(){	
 		String choice1 = "Tous les spots (peu importe si équipé ou officiel)"; 

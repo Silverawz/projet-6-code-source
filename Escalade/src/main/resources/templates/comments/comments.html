@@ -58,17 +58,19 @@ input.html-text-box {background-color:#000000;font-family:Arial;font-size:14pt;c
 							<td th:text=${c.getUser().getFirstname()}></td>
 							<td th:text=${c.commentaire_description}></td>
 							
-
-							<td th:if="${userEmail == c.getUser().getEmail()}">
+							
+							<td th:if="${userEmail == c.getUser().getEmail() OR role != null}">
 							<a th:href="@{/changecomment(id=${c.commentaire_id})}">
 							Modifier le commentaire</a>
 							</td>
 							
-							<td th:if="${userEmail == c.getUser().getEmail()}">
+							<td th:if="${userEmail == c.getUser().getEmail() OR role != null}">
 							<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletecommentaire(id=${c.commentaire_id})}">
 							Supprimer le commentaire</a>
 							</td>
-
+				
+				
+		
 						</tr>
 					</table>
 				</div>

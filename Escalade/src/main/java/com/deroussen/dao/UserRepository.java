@@ -13,5 +13,6 @@ public interface UserRepository extends JpaRepository <User, Long>{
 	@Query("from User where id=?1")
 	User findByUserId(Long id);
 	
+	// select a.firstName, a.lastName from Book b join b.authors a where b.id = :id
 	
 }

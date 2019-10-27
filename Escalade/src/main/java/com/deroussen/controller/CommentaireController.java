@@ -2,7 +2,7 @@ package com.deroussen.controller;
 
 import java.util.Collections;
 import java.util.List;
-
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.deroussen.dao.CommentaireRepository;
 import com.deroussen.entities.Commentaire;
+import com.deroussen.entities.Role;
+import com.deroussen.entities.User;
 import com.deroussen.service.CommentaireService;
 import com.deroussen.service.SpotService;
 import com.deroussen.service.UserService;
@@ -34,10 +36,17 @@ public class CommentaireController {
 	private SpotService spotService;
 	
 	@RequestMapping(value={"/listecommentaire"}, method=RequestMethod.GET)
-	public ModelAndView formGet(@RequestParam(name="id") Long spotId) {
+	public ModelAndView formGet(@RequestParam(name="id") Long spotId,
+			@SessionAttribute(required=false, name="userEmail") String userEmail) {
 		ModelAndView modelView = new ModelAndView();	
 		List<Commentaire> commentaires = commentaireService.findBySpotId(spotId);
 		Collections.reverse(commentaires);
+		if(userEmail != null) {
+			boolean result = checkIfUserIsMember(userService.findUserByEmail(userEmail));
+			if(result == true) {
+				modelView.addObject("role", "MEMBER");
+			}
+		}
 		modelView.addObject("spotId", spotId);
 		modelView.addObject("commentaires", commentaires);
 		modelView.setViewName("comments/comments");
@@ -68,7 +77,8 @@ public class CommentaireController {
 			@SessionAttribute("userEmail") String userEmail) {
 		ModelAndView modelView = new ModelAndView();	
 		Commentaire commentaire = commentaireService.findByCommentaireId(commentaireId);
-		if(commentaire.getUser().getEmail().equals(userEmail)){		
+		boolean result = checkIfUserIsMember(userService.findUserByEmail(userEmail));
+		if(commentaire.getUser().getEmail().equals(userEmail) || result == true){		
 			commentaireRepository.deleteById(commentaireId);
 			modelView.setViewName("redirect:/listecommentaire?id="+commentaire.getSpot().getSpot_id());
 		}
@@ -84,10 +94,12 @@ public class CommentaireController {
 			@SessionAttribute("userEmail") String userEmail) {
 		ModelAndView modelView = new ModelAndView();			
 		Commentaire commentaire = commentaireService.findByCommentaireId(commentaireId);
-		if(commentaire.getUser().getEmail().equals(userEmail)){	
+		boolean result = checkIfUserIsMember(userService.findUserByEmail(userEmail));
+		if(commentaire.getUser().getEmail().equals(userEmail) || result == true){	
 			modelView.addObject("commentaire_id", commentaireId);
 			modelView.addObject("madeByUser", commentaire.getUser().getEmail());
-			modelView.addObject("description", commentaire.getCommentaire_description());	
+			modelView.addObject("description", commentaire.getCommentaire_description());
+			modelView.addObject("role", "CanBeMEMBER");
 			modelView.setViewName("comments/changecomments");
 		}
 		else {
@@ -116,5 +128,23 @@ public class CommentaireController {
 	
 	
 	
+	public boolean checkIfUserIsMember(User user) {
+		Set<Role> userRoles = user.getRoles();
+		boolean isAMember= false;
+		C:for (Role role : userRoles) {
+			if(role.getRole().equals("MEMBER") || role.getRole().equals("ADMIN")) {
+				isAMember = true;
+			}
+			if(isAMember == true) {
+				break C;
+			}
+		}		
+		if(isAMember) {
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
 
 }

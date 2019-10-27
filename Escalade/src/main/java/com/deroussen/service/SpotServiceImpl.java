@@ -24,7 +24,6 @@ public class SpotServiceImpl implements SpotService {
 
 	@Override
 	public void saveSpot(Spot spot) {
-		spot.setIs_official(false);
 		spotRepository.save(spot);
 	}
 

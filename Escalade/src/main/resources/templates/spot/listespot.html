@@ -5,6 +5,11 @@
 	layout:decorate="layout">
 <head>
 <meta charset="utf-8">
+
+
+
+    
+    
 <title>Liste des spots d'escalade</title>
 </head>
 <body>
@@ -31,7 +36,8 @@
 				</div>
 				<div class="panel-heading">Liste des sites d'escalade</div>
 				<div class="panel-body">
-					<table class="table">
+					<table class="display table table-striped table-hover" style="width:100%">
+					<thead>
 						<tr>
 							<th>ID du spot</th>
 							<th>Nom du spot</th>
@@ -41,6 +47,8 @@
 							<th>Crée par</th>
 							<th>Nombre de secteur(s)</th>
 						</tr>
+					</thead>
+					<tbody>
 						<tr th:each="s:${spotlist}">
 							<td th:text=${s.spot_id}></td>
 							<td th:text=${s.spot_name}></td>
@@ -67,25 +75,17 @@
 							<td><a th:href="@{/listecommentaire(id=${s.spot_id})}">
 							Voir le(s) commentaires(s)</a>
 							</td>
+							<td th:if="${s.is_official == false and role != null}">
+							<a th:href="@{/spotofficiel(id=${s.spot_id}, page=${currentPage}, motCle=${motCle})}">
+							Passer "Officiel"</a>
+							</td>
+							<td th:if="${s.is_official == true and role != null}">
+							<a th:href="@{/spotofficiel(id=${s.spot_id}, page=${currentPage}, motCle=${motCle})}">
+							Retirer "Officiel"</a>
+							</td>		
 						</tr>
+						</tbody>
 					</table>
-
-					<ul class="nav nav-pills">
-						
-						
-	
-
-					<!--  
-					
-					
-					 
-						<li th:class="${currentPage==status.index}?'active':''" 
-						th:each="page,status:${index}">
-	
-						 <a onclick="return confirm(Etes vous sur ?'')" 
-						th:href="@{/listespot(page=${status.index}, motCle=${motCle})}" 
-						th:text="${status.index}"></a></li>-->
-					</ul>
 				</div>
 			</div>
 		</div>

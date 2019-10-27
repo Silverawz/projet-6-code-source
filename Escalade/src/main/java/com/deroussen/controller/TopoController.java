@@ -75,6 +75,7 @@ public class TopoController {
 		return modelView;
 	}
 	
+	//delete when using the public list returning view to public list
 	@RequestMapping(value={"/deletetopo"}, method=RequestMethod.GET)
 	public ModelAndView getTopoDelete(@RequestParam(name="id") Long topoId,
 			@SessionAttribute("userEmail") String userEmail) {
@@ -89,9 +90,25 @@ public class TopoController {
 		return modelView;
 	}
 	
+	//delete when using the private list returning view to private list of user
+	@RequestMapping(value={"/deletetopopersonal"}, method=RequestMethod.GET)
+	public ModelAndView getTopoPersonalDelete(@RequestParam(name="id") Long topoId,
+			@SessionAttribute("userEmail") String userEmail) {
+		ModelAndView modelView = new ModelAndView();
+		if(topoService.findById(topoId).getUserOwnerOfTheTopo().getEmail().equals(userEmail)) {
+			topoRepository.deleteById(topoId);	
+			modelView.setViewName("redirect:/userlistetopo");
+		}
+		else {
+			modelView.setViewName("errors/access_denied");
+		}
+		return modelView;
+	}
 	
+	//change when using the public list
 	@RequestMapping(value={"/changetopo"}, method=RequestMethod.GET)
-	public ModelAndView changeSpotGet(@RequestParam(name="id") Long topoId) {
+	public ModelAndView changeTopotGet(@RequestParam(name="id") Long topoId
+			) {
 		ModelAndView modelView = new ModelAndView();
 		Topo topo = topoRepository.getOne(topoId);
 		modelView.addObject("topo_id", topoId);
@@ -106,9 +123,27 @@ public class TopoController {
 		return modelView;
 	}
 	
+	//change when using the private list in personal space
+	@RequestMapping(value={"/changetopopersonal"}, method=RequestMethod.GET)
+	public ModelAndView changeTopoPersonaltGet(@RequestParam(name="id") Long topoId
+			) {
+		ModelAndView modelView = new ModelAndView();
+		Topo topo = topoRepository.getOne(topoId);
+		modelView.addObject("topo_id", topoId);
+		modelView.addObject("topo_name", topo.getTopo_name());
+		modelView.addObject("topo_lieu", topo.getTopo_lieu());
+		modelView.addObject("topo_description", topo.getTopo_description());
+		modelView.addObject("topo_available", topo.isIs_available());
+		modelView.addObject("topo_madeByUser", topo.getUserOwnerOfTheTopo().getFirstname());
+		modelView.addObject("topo_madeByUser_email", topo.getUserOwnerOfTheTopo().getEmail());
+		modelView.addObject("topo_date_parution", topo.getTopo_date_parution());
+		modelView.setViewName("topo/changetopopersonal");
+		return modelView;
+	}
 	
+	//change when using the public list
 	@RequestMapping(value={"/changetopo"}, method=RequestMethod.POST)
-	public ModelAndView changeSpotPost(@Valid Topo topo, BindingResult bindingResult
+	public ModelAndView changeTopoPost(@Valid Topo topo, BindingResult bindingResult
 			) {
 		ModelAndView modelView = new ModelAndView();
 		Topo topoUpdate = topoRepository.getOne(topo.getTopo_id());	
@@ -126,10 +161,38 @@ public class TopoController {
 			topoUpdate.setIs_available(topo.isIs_available());
 			topoUpdate.setTopo_date_parution(topo.getTopo_date_parution());
 			topoRepository.save(topoUpdate);
-			modelView.setViewName("redirect:/listetopo");
+			modelView.setViewName("redirect:/listetopo");	
 		}
 		else {
-			modelView.setViewName("redirect:/listetopo");
+			modelView.setViewName("redirect:/listetopo");	
+		}
+		return modelView;
+	}
+	
+	//change when using the private list in personal space
+	@RequestMapping(value={"/changetopopersonal"}, method=RequestMethod.POST)
+	public ModelAndView changeTopoPersonalPost(@Valid Topo topo, BindingResult bindingResult
+			) {
+		ModelAndView modelView = new ModelAndView();
+		Topo topoUpdate = topoRepository.getOne(topo.getTopo_id());	
+		Topo topoResearchedByName = topoService.findByTopoName(topo.getTopo_name());
+		Long idVerificationTopoResearched = (long) -1;
+		if(topoResearchedByName != null) {
+			idVerificationTopoResearched = topoResearchedByName.getTopo_id();
+		}
+		Long idVerificationTopoUpdated = topo.getTopo_id();
+		// if both id corresponds then the name hasn't been changed but other informations may have been
+		if(topoResearchedByName == null || idVerificationTopoResearched.equals(idVerificationTopoUpdated)) { 
+			topoUpdate.setTopo_name(topo.getTopo_name());
+			topoUpdate.setTopo_lieu(topo.getTopo_lieu());
+			topoUpdate.setTopo_description(topo.getTopo_description());		
+			topoUpdate.setIs_available(topo.isIs_available());
+			topoUpdate.setTopo_date_parution(topo.getTopo_date_parution());
+			topoRepository.save(topoUpdate);
+			modelView.setViewName("redirect:/userlistetopo");	
+		}
+		else {
+			modelView.setViewName("redirect:/userlistetopo");	
 		}
 		return modelView;
 	}
@@ -140,11 +203,11 @@ public class TopoController {
 		ModelAndView modelView = new ModelAndView();
 		Long userId = userService.findUserByEmail(userEmail).getId();
 		if(!userId.equals(null)) {
-		topoService.insertReservation(topoId, userId);
-		modelView.setViewName("redirect:/listetopo");
+			topoService.insertReservation(topoId, userId);
+			modelView.setViewName("redirect:/listetopo");
 		}		
 		else {
-		modelView.setViewName("topo/reservation");	
+			modelView.setViewName("topo/reservation");	
 		}
 		return modelView;
 	}

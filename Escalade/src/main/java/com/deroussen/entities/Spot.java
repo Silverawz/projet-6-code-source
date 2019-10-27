@@ -51,6 +51,33 @@ public class Spot {
 		
 	}
 
+	
+	public Spot(Long spot_id, @Size(min = 3, max = 30) String spot_name, @Size(min = 3, max = 30) String spot_lieu,
+			boolean is_equipped, boolean is_official, List<Secteur> secteurs, List<Commentaire> commentaires,
+			User user) {
+		super();
+		this.spot_id = spot_id;
+		this.spot_name = spot_name;
+		this.spot_lieu = spot_lieu;
+		this.is_equipped = is_equipped;
+		this.is_official = is_official;
+		this.secteurs = secteurs;
+		this.commentaires = commentaires;
+		this.user = user;
+	}
+
+
+	public Spot(@Size(min = 3, max = 30) String spot_name, @Size(min = 3, max = 30) String spot_lieu,
+			boolean is_equipped, boolean is_official, User user) {
+		super();
+		this.spot_name = spot_name;
+		this.spot_lieu = spot_lieu;
+		this.is_equipped = is_equipped;
+		this.is_official = is_official;
+		this.user = user;
+	}
+
+
 	public Spot(String spot_name, boolean is_equipped, boolean is_official) {
 		super();
 		this.spot_name = spot_name;

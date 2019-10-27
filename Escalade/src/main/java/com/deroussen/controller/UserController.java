@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.deroussen.entities.Role;
 import com.deroussen.entities.Topo;
 import com.deroussen.entities.User;
 import com.deroussen.service.TopoService;
@@ -43,11 +45,11 @@ public class UserController {
 	
 	@RequestMapping(value={"/signup"}, method=RequestMethod.GET)
 	public ModelAndView signup() {
-		ModelAndView model = new ModelAndView();
+		ModelAndView modelView = new ModelAndView();
 		User user = new User();
-		model.addObject("user",  user);
-		model.setViewName("user/signup");
-		return model;
+		modelView.addObject("user",  user);
+		modelView.setViewName("user/signup");
+		return modelView;
 	}
 	
 	@RequestMapping(value={"/signup"}, method=RequestMethod.POST)
@@ -72,29 +74,68 @@ public class UserController {
 	
 	@RequestMapping(value={"/home/home"}, method=RequestMethod.GET)
 	public ModelAndView home() {
-		ModelAndView model = new ModelAndView();
+		ModelAndView modelView = new ModelAndView();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		User user = userService.findUserByEmail(auth.getName());	
-		model.addObject("userEmail", user.getEmail());
-		model.setViewName("home/home");
-		return model;
+		User user = userService.findUserByEmail(auth.getName());
+		modelView.addObject("userEmail", user.getEmail());
+		modelView.setViewName("home/home");
+		return modelView;
 	}
 	
 	@RequestMapping(value={"/acces_denied"}, method=RequestMethod.GET)
 	public ModelAndView accessdenied() {
-		ModelAndView model = new ModelAndView();
-		model.setViewName("errors/access_denied");
-		return model;
+		ModelAndView modelView = new ModelAndView();
+		modelView.setViewName("errors/access_denied");
+		return modelView;
 	}
-	
+		
 	@RequestMapping(value={"/personalpage"}, method=RequestMethod.GET)
 	public ModelAndView personalPage(@SessionAttribute("userEmail") String userEmail) {
+		ModelAndView modelView = new ModelAndView();
+		User user = userService.findUserByEmail(userEmail);
+		List<Topo> listTopoOfCurrentUser = topoService.findTopoWithUserId(user.getId());		
+		int numberOfRequestReceived = 0;
+		for (Topo topo : listTopoOfCurrentUser) {
+			int size = userService.findReservationUserIdWithTopoId(topo.getTopo_id()).size();
+			if(size != 0) {
+				for(int i = 0; i < size; i++) {	
+					numberOfRequestReceived++;
+				}
+			}			
+		}	
+		modelView.addObject("topoPossede", listTopoOfCurrentUser.size());
+		modelView.addObject("requeteRecu", numberOfRequestReceived);
+		modelView.setViewName("user/personalpage");
+		return modelView;
+	}
+	
+	@RequestMapping(value={"/userlistetopo"}, method=RequestMethod.GET)
+	public ModelAndView getTopoList(@SessionAttribute("userEmail") String userEmail) {
+		ModelAndView modelView = new ModelAndView();	
+		List <Topo> topos = topoService.findTopoWithUserId(userService.findUserByEmail(userEmail).getId());
+		modelView.addObject("topolist", topos);
+		modelView.setViewName("user/userlistetopo");
+		return modelView;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	@RequestMapping(value={"/userlisterequestreceived"}, method=RequestMethod.GET)
+	public ModelAndView userListeRequestReceived(@SessionAttribute("userEmail") String userEmail) {
 		ModelAndView modelView = new ModelAndView();
 		Long userId = userService.findUserByEmail(userEmail).getId();
 		List<Topo> listTopoOfCurrentUser = topoService.findTopoWithUserId(userId);
 		List<String> grande_liste_de_tout = new ArrayList<>();
 		for (Topo topo : listTopoOfCurrentUser) {
-			int size = userService.findReservationUserIdWithTopoId(topo.getTopo_id()).size(); // WORK result excpected = (1,0,0)			
+			int size = userService.findReservationUserIdWithTopoId(topo.getTopo_id()).size(); // WORK result expected = (1,0,0)			
 			if(size != 0) {		
 				for(int i = 0; i < size; i++) {	
 					grande_liste_de_tout.add(userService.findByUserId(userService.findReservationUserIdWithTopoId
@@ -103,7 +144,7 @@ public class UserController {
 			}	
 		}
 		modelView.addObject("grande_liste_de_tout", grande_liste_de_tout);
-		modelView.setViewName("user/personalpage");
+		modelView.setViewName("user/userlisterequestreceived");
 		return modelView;
 	}
 	
