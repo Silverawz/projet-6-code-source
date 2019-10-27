@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<title>Liste des requêtes concernant vos topos</title>
+</head>
+<body>
+	<div layout:fragment="content">
+		<div class="container">
+		<h1>Bienvenue dans votre espace personnel</h1>
+			<div class="panel-body">
+				<table class="table">
+						<tr>
+							<th>Demande de reservation de topo</th>
+						</tr>
+						<tr th:each="e : ${grande_liste_de_tout}">
+							<td th:text="${e}"></td>
+							<!-- 
+							<td><a th:href="@{/reservationaccepted(information=${e})}"> 
+							Accepter la demande de réservation</a>
+							</td>
+							<td><a th:href="@{/reservationdeclined(information=${e})}"> 
+							Refuser la demande de réservation</a>
+							
+							<input type="hidden" name="reservationaccepted" form="my_form"/>
+		
+							<td>
+						    <input type="submit" name="reservationdeclined" form="my_form" th:action="@{/reservationdeclined}"/>
+						    	<button type="button" form="my_form" th:value="${e}">Refuser la demande de réservation</button>
+						    </td>
+							</td>			
+							 -->
+							 <td>
+							 <form th:action="@{/reservationaccepted}" method="post">
+							 	<input name="e" th:value="${e}" type="hidden">
+							 	<input type="submit" value="Accepter la demande de réservation">
+							 </form>
+							 </td>
+							 <td>
+							 <form th:action="@{/reservationdeclined}" method="post">
+							 	<input name="e" th:value="${e}" type="hidden">
+							 	<input type="submit" value="Refuser la demande de réservation">
+							 </form>
+							 </td>
+						</tr>
+					</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

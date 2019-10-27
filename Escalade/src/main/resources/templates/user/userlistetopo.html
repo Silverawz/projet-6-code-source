@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="layout">
+<head>
+<meta charset="utf-8">
+<title>Liste des topos que vous possédez</title>
+</head>
+<body>
+	<div layout:fragment="content">	
+			<div class="container">
+				<div class="panel panel-primary">
+				<div class="panel-heading">Liste de vos topos</div>
+				<div class="panel-body">
+					<table class="table">
+						<tr>
+							<th>ID du topo</th>
+							<th>Nom</th>
+							<th>Lieu</th>					
+							<th>Description</th>
+							<th>Disponibilité</th>
+							<th>Crée par</th>
+							<th>Date de parution</th>
+							
+							<tr th:each="s:${topolist}">
+								<td th:text=${s.topo_id}></td>
+								<td th:text=${s.topo_name}></td>
+								<td th:text=${s.topo_lieu}></td>
+								<td th:text=${s.topo_description}></td>
+								<td th:text=${s.is_available}></td>
+								<td th:text=${s.userOwnerOfTheTopo.getFirstname()}></td>
+								<td th:text=${s.topo_date_parution}></td>
+								
+							
+								<td th:if="${userEmail == s.userOwnerOfTheTopo.getEmail()}">
+								<a th:href="@{/changetopopersonal(id=${s.topo_id})}">
+								Modifier le topo</a>
+								</td>
+								
+								<td th:if="${userEmail == s.userOwnerOfTheTopo.getEmail()}">
+								<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletetopopersonal(id=${s.topo_id})}">
+								Supprimer le topo</a>
+								</td>
+								
+							</tr>
+						</table>
+					</div>
+				
+				</div>
+			</div>
+		</div>
+</body>
+</html>
