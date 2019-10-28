@@ -133,6 +133,14 @@ public class Topo {
 		this.userReservingTheTopo = userReservingTheTopo;
 	}
 
+	public Set<User> getUsersAskingForReservation() {
+		return usersAskingForReservation;
+	}
+
+	public void setUsersAskingForReservation(Set<User> usersAskingForReservation) {
+		this.usersAskingForReservation = usersAskingForReservation;
+	}
+
 	
 	
 	

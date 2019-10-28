@@ -1,8 +1,9 @@
 package com.deroussen.controller;
 
-import java.lang.reflect.Array;
+
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.deroussen.entities.Role;
+import com.deroussen.dao.TopoRepository;
 import com.deroussen.entities.Topo;
 import com.deroussen.entities.User;
 import com.deroussen.service.TopoService;
@@ -35,6 +36,8 @@ public class UserController {
 	private UserService userService;
 	@Autowired
 	private TopoService topoService;
+	@Autowired
+	private TopoRepository topoRepository;
 	
 	@RequestMapping(value={"/","/login"}, method=RequestMethod.GET)
 	public ModelAndView login() {
@@ -96,7 +99,8 @@ public class UserController {
 		List<Topo> listTopoOfCurrentUser = topoService.findTopoWithUserId(user.getId());		
 		int numberOfRequestReceived = 0;
 		for (Topo topo : listTopoOfCurrentUser) {
-			int size = userService.findReservationUserIdWithTopoId(topo.getTopo_id()).size();
+			int size = topo.getUsersAskingForReservation().size();
+			// int size = userService.findReservationUserIdWithTopoId(topo.getTopo_id()).size();
 			if(size != 0) {
 				for(int i = 0; i < size; i++) {	
 					numberOfRequestReceived++;
@@ -118,78 +122,89 @@ public class UserController {
 		return modelView;
 	}
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	@RequestMapping(value={"/userlisterequestreceived"}, method=RequestMethod.GET)
 	public ModelAndView userListeRequestReceived(@SessionAttribute("userEmail") String userEmail) {
 		ModelAndView modelView = new ModelAndView();
 		Long userId = userService.findUserByEmail(userEmail).getId();
 		List<Topo> listTopoOfCurrentUser = topoService.findTopoWithUserId(userId);
-		List<String> grande_liste_de_tout = new ArrayList<>();
+		
+		List<String> emailUserWhoMadeRequest = new ArrayList<>();
+		List<String> listToposName = new ArrayList<>();
+		
 		for (Topo topo : listTopoOfCurrentUser) {
-			int size = userService.findReservationUserIdWithTopoId(topo.getTopo_id()).size(); // WORK result expected = (1,0,0)			
-			if(size != 0) {		
-				for(int i = 0; i < size; i++) {	
-					grande_liste_de_tout.add(userService.findByUserId(userService.findReservationUserIdWithTopoId
-					(topo.getTopo_id()).get(i)).getEmail()+" vous demande une réservation pour le topo : "+topo.getTopo_name());	
+			Set<User> users = topo.getUsersAskingForReservation();
+			// int size = userService.findReservationUserIdWithTopoId(topo.getTopo_id()).size();		
+			if(users.size() != 0) {		
+				List<Long> listReservationUserId = new ArrayList<>();
+				for (User user : users) {
+					listReservationUserId.add(user.getId());
+					User user1 = userService.findByUserId(user.getId());
+					emailUserWhoMadeRequest.add(user1.getEmail());
+					listToposName.add(topo.getTopo_name());
 				}
+					/*
+				for(int i = 0; i < size; i++) {	
+					users = topo.getUsersAskingForReservation();
+					//on met dans une liste les id des users
+					listReservationUserId = userService.findReservationUserIdWithTopoId(topo.getTopo_id());
+					//on creer un user avec l'id 
+					User user = userService.findByUserId(listReservationUserId.get(i));
+					//on met l'email de l'user dans une liste
+					emailUserWhoMadeRequest.add(user.getEmail());	
+					listToposName.add(topo.getTopo_name());
+				}  */	 
 			}	
+		}		
+		List<List <String>> emailUserWhoMadeRequestAndTopoName = new ArrayList<>();
+		for(int i = 0; i < listToposName.size(); i++) {
+			List <String> newList = new ArrayList<>();
+			newList.add(listToposName.get(i));
+			newList.add(emailUserWhoMadeRequest.get(i));
+			emailUserWhoMadeRequestAndTopoName.add(newList);
 		}
-		modelView.addObject("grande_liste_de_tout", grande_liste_de_tout);
+		modelView.addObject("listToposName", listToposName);
+		modelView.addObject("emailUserWhoMadeRequest", emailUserWhoMadeRequest);
+		modelView.addObject("listofListOfTopoNameWithEmailUserWhoMadeRequest", emailUserWhoMadeRequestAndTopoName);
 		modelView.setViewName("user/userlisterequestreceived");
 		return modelView;
 	}
-	
-	
+		
 	@RequestMapping(value={"/reservationaccepted"}, method=RequestMethod.POST)
 	public ModelAndView reservationAccepted(@SessionAttribute("userEmail") String userEmail,
-			@RequestParam(name="e") String informationContainingUserEmailAndTopoName
+			@RequestParam(name="topoNameAndEmailUserWhoMadeRequest") List<String> topoNameAndEmailUserWhoMadeRequest
 			) {
 		ModelAndView modelView = new ModelAndView();
-		String[] split = informationContainingUserEmailAndTopoName.split(" vous demande une réservation pour le topo : ");
-		Object userWhoWantReservationEmailObject = Array.get(split,0);	
-		String userWhoWantReservationEmail = (String)userWhoWantReservationEmailObject;
-		Object topoNameObject = Array.get(split,1);   
-		String topoName = (String)topoNameObject;
-		// delete the row that matches with topo id and user id
-		Long userId = userService.findUserByEmail(userWhoWantReservationEmail).getId();
-		deleteReservationRow(topoService.findByTopoName(topoName).getTopo_id(), userId);
+		String topoName = topoNameAndEmailUserWhoMadeRequest.get(0).replaceAll("\\[|\\]", "");
+		String userEmailName = topoNameAndEmailUserWhoMadeRequest.get(1).replaceAll("\\[|\\]", "");
+		Set <User> users = new HashSet<>();
+		topoService.findByTopoName(topoName).setUsersAskingForReservation(users);
+		topoRepository.save(topoService.findByTopoName(topoName));
 		Topo topo = topoService.findByTopoName(topoName);
 		topo.setIs_available(false);
-		topo.setUserReservingTheTopo(userService.findUserByEmail(userWhoWantReservationEmail));
+		topo.setUserReservingTheTopo(userService.findUserByEmail(userEmailName));
 		topoService.saveTopo(topo);
 		modelView.setViewName("redirect:/personalpage");
 		return modelView;
 	}
 	
-	
 	@RequestMapping(value={"/reservationdeclined"}, method=RequestMethod.POST)
 	public ModelAndView reservationDeclined(@SessionAttribute("userEmail") String userEmail,
-			@RequestParam(name="e") String informationContainingUserEmailAndTopoName
+			@RequestParam(name="topoNameAndEmailUserWhoMadeRequest") List<String> topoNameAndEmailUserWhoMadeRequest
 			) {
-		ModelAndView modelView = new ModelAndView();
-		String[] split = informationContainingUserEmailAndTopoName.split(" vous demande une réservation pour le topo : ");
-		Object userWhoWantReservationEmailObject = Array.get(split,0);	
-		String userWhoWantReservationEmail = (String)userWhoWantReservationEmailObject;
-		Object topoNameObject = Array.get(split,1);   
-		String topoName = (String)topoNameObject;
-		// delete the row that matches with topo id and user id
-		deleteReservationRow(topoService.findByTopoName(topoName).getTopo_id(), userService.findUserByEmail(userWhoWantReservationEmail).getId());
+		ModelAndView modelView = new ModelAndView();	
+		String topoName = topoNameAndEmailUserWhoMadeRequest.get(0).replaceAll("\\[|\\]", "");
+		String userEmailName = topoNameAndEmailUserWhoMadeRequest.get(1).replaceAll("\\[|\\]", "");
+		Long userId = userService.findUserByEmail(userEmailName).getId();	
+		Set<User> users = topoService.findByTopoName(topoName).getUsersAskingForReservation();
+		C:for (User user : users) {
+			if(user.getId() == userId) {
+				users.remove(user);
+				break C;
+			}
+		}
+		topoRepository.save(topoService.findByTopoName(topoName));
 		modelView.setViewName("redirect:/personalpage");
 		return modelView;
 	}
 	
-	
-	
-	public void deleteReservationRow(Long topoId, Long userId) {
-		topoService.cancelReservationRequest(topoId, userId);	
-	}
 }

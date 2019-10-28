@@ -1,7 +1,9 @@
 package com.deroussen.controller;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.Valid;
 
@@ -17,6 +19,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.deroussen.dao.TopoRepository;
 import com.deroussen.entities.Topo;
+import com.deroussen.entities.User;
 import com.deroussen.service.TopoService;
 import com.deroussen.service.UserService;
 
@@ -35,9 +38,19 @@ public class TopoController {
 	private UserService userService;
 	
 	@RequestMapping(value={"/listetopo"}, method=RequestMethod.GET)
-	public ModelAndView getTopoList() {
+	public ModelAndView getTopoList(@SessionAttribute("userEmail") String userEmail) {
 		ModelAndView modelView = new ModelAndView();
-		List <Topo> topos = topoRepository.findAll();	
+		List <Topo> topos = topoRepository.findAll();
+		List <String> alreadyRequest = new ArrayList<>();
+		for (Topo topo : topos) {
+			if(topo.getUsersAskingForReservation().contains(userService.findUserByEmail(userEmail))) {
+				alreadyRequest.add("1");
+			}
+			else {
+				alreadyRequest.add(null);
+			}
+		}
+		modelView.addObject("alreadyRequest", alreadyRequest);
 		modelView.addObject("topolist", topos);
 		modelView.setViewName("topo/listetopo");
 		return modelView;
@@ -197,11 +210,20 @@ public class TopoController {
 		return modelView;
 	}
 	
+	
+	
 	@RequestMapping(value={"/demandereservation"}, method=RequestMethod.GET)
 	public ModelAndView getReservation(@RequestParam(name="id") Long topoId,
 			@SessionAttribute("userEmail") String userEmail) {
 		ModelAndView modelView = new ModelAndView();
-		Long userId = userService.findUserByEmail(userEmail).getId();
+		
+		Topo topo = topoRepository.findByid(topoId);
+		Set <User> update = topo.getUsersAskingForReservation();
+		update.add(userService.findUserByEmail(userEmail));
+		topo.setUsersAskingForReservation(update);
+		topoRepository.save(topo);
+		modelView.setViewName("redirect:/listetopo");
+		/*
 		if(!userId.equals(null)) {
 			topoService.insertReservation(topoId, userId);
 			modelView.setViewName("redirect:/listetopo");
@@ -209,6 +231,7 @@ public class TopoController {
 		else {
 			modelView.setViewName("topo/reservation");	
 		}
+		*/
 		return modelView;
 	}
 	

@@ -13,7 +13,7 @@
 				<div class="panel panel-primary">
 				<div class="panel-heading">Liste des topos</div>
 				<div class="panel-body">
-					<table class="table">
+					<table class="display table table-striped table-hover">
 						<tr>
 							<th>ID du topo</th>
 							<th>Nom</th>
@@ -23,7 +23,7 @@
 							<th>Crée par</th>
 							<th>Date de parution</th>
 							
-							<tr th:each="s:${topolist}">
+							<tr th:each="s,iterStat:${topolist}">
 								<td th:text=${s.topo_id}></td>
 								<td th:text=${s.topo_name}></td>
 								<td th:text=${s.topo_lieu}></td>
@@ -32,9 +32,14 @@
 								<td th:text=${s.userOwnerOfTheTopo.getFirstname()}></td>
 								<td th:text=${s.topo_date_parution}></td>
 								
-								<td th:if="${userEmail != null and userEmail != s.userOwnerOfTheTopo.getEmail()}">
+								<td th:if="${userEmail != null and userEmail != s.userOwnerOfTheTopo.getEmail() 
+								and s.is_available == true and alreadyRequest[__${iterStat.index}__] == null}">
 								<a th:href="@{/demandereservation(id=${s.topo_id})}">
 								Faire une demande de réservation</a>
+								</td>
+								
+								<td th:if="${alreadyRequest[__${iterStat.index}__] != null}">
+									La demande de reservation a été envoyé.
 								</td>
 								
 								<td th:if="${userEmail == s.userOwnerOfTheTopo.getEmail()}">
