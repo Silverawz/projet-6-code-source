@@ -16,10 +16,12 @@ input.html-text-box {background-color:#000000;font-family:Arial;font-size:14pt;c
 <body>
 	<div layout:fragment="content">	
 	<div class="container">
+		<h6>Nom du spot :   <a th:href="@{/listespot(id=${spotId})}" th:text="${spot_name}"></a></h6>
+		
 		<div th:if="${userEmail != null}">		
 				<div class="panel panel-primary">
 					<div class="panel-body">	
-						<div class="panel-heading">Ecrire un commentaire pour ce spot</div>
+						<div class="panel-heading">Ecrire un commentaire pour ce spot (10 caractères minimum - 255 maximum)</div>
 						
 						
 						<form method="post" th:action="@{/createcommentaire(id=${spotId})}">

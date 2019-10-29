@@ -4,7 +4,7 @@ package com.deroussen.service;
 
 
 import java.util.ArrayList;
-
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.deroussen.dao.SpotRepository;
+import com.deroussen.entities.Longueur;
+import com.deroussen.entities.Secteur;
 import com.deroussen.entities.Spot;
+import com.deroussen.entities.Voie;
 
 @Service("spotService")
 public class SpotServiceImpl implements SpotService {
@@ -39,6 +42,8 @@ public class SpotServiceImpl implements SpotService {
 		return spotRepository.findByid(id);
 	}
 
+	
+	/*
 	@Override
 	public Page <Spot> findBySpotContains(String motcle, Pageable page, String choice) {
 		String mcLowerCase = motcle.toLowerCase();
@@ -111,8 +116,13 @@ public class SpotServiceImpl implements SpotService {
 			return spotsPageList;	
 		}
 	}
-
+*/
 	
+	
+	
+	
+	
+	/*
 	public List<Spot> iterationList(List<Spot> list1, List<Spot> list2) {
 		List<Spot> spotsList = new ArrayList<Spot>();
 		for (Spot spot : list1) {
@@ -127,8 +137,121 @@ public class SpotServiceImpl implements SpotService {
 		}		
 		return spotsList;	
 	}
+*/
+	
 
 	
 	
-	
+	@Override
+	public List<Spot> findBySpotContainsWithParam(String motcle, String checkbox_id, String checkbox_name, String checkbox_lieu,
+			String checkbox_cotation, String checkbox_equipped, String checkbox_official, String checkbox_madeBy, String checkbox_secteur_nbre) {	
+		String mcLowerCase = motcle.toLowerCase();
+		List<Spot> allSpots = spotRepository.findAll();
+		List<Spot> spotListResult = new ArrayList<>();
+
+		if(checkbox_id.equals("on") && !mcLowerCase.equals("")) {
+			for (Spot spot : allSpots) {
+				String idCastedFromLongToString = String.valueOf(spot.getSpot_id());
+				if(mcLowerCase.contains(idCastedFromLongToString)){
+					spotListResult.add(spot);
+				}
+			}	
+		}
+		if(checkbox_name.equals("on") && !mcLowerCase.equals("")) {
+			for (Spot spot : allSpots) {
+				if(mcLowerCase.contains(spot.getSpot_name().toLowerCase())){
+					if(!spotListResult.contains(spot)){
+						spotListResult.add(spot);
+					}			
+				}
+			}	
+		}
+		if(checkbox_lieu.equals("on") && !mcLowerCase.equals("")) {
+			for (Spot spot : allSpots) {
+				if(mcLowerCase.contains(spot.getSpot_lieu().toLowerCase())){
+					if(!spotListResult.contains(spot)){
+						spotListResult.add(spot);
+					}			
+				}
+			}	
+		}
+		if(checkbox_cotation.equals("on") && !mcLowerCase.equals("")) {
+			for (Spot spot : allSpots) {				
+				for (Secteur secteur : spot.getSecteurs()) {
+					for (Voie voie : secteur.getVoies()) {
+						if(mcLowerCase.contains(voie.getVoie_cotation().toLowerCase())) {
+							if(!spotListResult.contains(spot)){
+								spotListResult.add(spot);
+							}	
+						}						
+						for (Longueur longueur : voie.getLongueurs()) {
+							if(mcLowerCase.contains(longueur.getLongueur_cotation().toLowerCase())) {
+								if(!spotListResult.contains(spot)){
+									spotListResult.add(spot);
+								}	
+							}
+						}
+					}			
+				}
+			}
+
+		}
+		if(checkbox_equipped.equals("on") && checkbox_official.equals("off")) {
+			for (Spot spot : allSpots) {
+				if(spot.isIs_equipped() == true){
+					if(!spotListResult.contains(spot)){
+						spotListResult.add(spot);
+					}			
+				}
+			}	
+		}
+		if(checkbox_official.equals("on") && checkbox_equipped.equals("off")) {
+			for (Spot spot : allSpots) {
+				if(spot.isIs_official() == true){
+					if(!spotListResult.contains(spot)){
+						spotListResult.add(spot);
+					}			
+				}
+			}	
+		}	
+		if(checkbox_official.equals("on") && checkbox_equipped.equals("on")) {
+			for (Spot spot : allSpots) {
+				if(spot.isIs_official() == true && spot.isIs_equipped() == true) {
+					if(!spotListResult.contains(spot)){
+						spotListResult.add(spot);
+					}			
+				}
+			}	
+		}
+		if(checkbox_madeBy.equals("on") && !mcLowerCase.equals("")) {
+			for (Spot spot : allSpots) {
+				if(mcLowerCase.contains(spot.getUser().getFirstname().toLowerCase())){
+					if(!spotListResult.contains(spot)){
+						spotListResult.add(spot);
+					}			
+				}
+			}	
+		}
+		if(checkbox_secteur_nbre.equals("on") && !mcLowerCase.equals("")) {
+			for (Spot spot : allSpots) {
+				if(mcLowerCase.contains(Integer.toString(spot.getSecteurs().size()))){
+					if(!spotListResult.contains(spot)){
+						spotListResult.add(spot);
+					}			
+				}
+			}	
+		}
+		if(spotListResult.size() != 0) {
+			Collections.sort(spotListResult);
+		}
+		
+		if(checkbox_id.equals("off") && checkbox_name.equals("off") && checkbox_lieu.equals("off") && checkbox_cotation.equals("off") &&
+		checkbox_equipped.equals("off") && checkbox_official.equals("off") && checkbox_madeBy.equals("off") && checkbox_secteur_nbre.equals("off")
+		&& mcLowerCase.equals("")) {
+			spotListResult = allSpots;
+		}
+		return spotListResult;
+	}
+
+
 }

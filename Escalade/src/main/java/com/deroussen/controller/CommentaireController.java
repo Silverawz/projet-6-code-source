@@ -47,6 +47,7 @@ public class CommentaireController {
 				modelView.addObject("role", "MEMBER");
 			}
 		}
+		modelView.addObject("spot_name", spotService.findById(spotId).getSpot_name());
 		modelView.addObject("spotId", spotId);
 		modelView.addObject("commentaires", commentaires);
 		modelView.setViewName("comments/comments");

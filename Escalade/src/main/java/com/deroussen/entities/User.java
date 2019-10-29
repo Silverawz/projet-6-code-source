@@ -14,6 +14,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="user")
@@ -21,16 +22,19 @@ public class User {
 		
 	@Id @GeneratedValue(strategy= GenerationType.AUTO)
 	private Long id;
-		
+	
 	@Column(name="email")
 	private String email;
-		
+	
+	@Size(min=3, max =30)
 	@Column(name="firstname")
 	private String firstname;
-		
+	
+	@Size(min=3, max =30)
 	@Column(name="lastname")
 	private String lastname;
 	
+	@Size(min=5, max =30)
 	@Column(name="password")
 	private String password;
 		

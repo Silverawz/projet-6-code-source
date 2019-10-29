@@ -81,16 +81,46 @@ public class SpotController {
 	
 	@RequestMapping(value={"/listespot"}, method=RequestMethod.GET)
 	public ModelAndView listeSpot(
-			@RequestParam(name="page", defaultValue= "0") int page,
+			// @RequestParam(name="page", defaultValue= "0") int page,
 			@RequestParam(name="motCle", defaultValue= "") String mc,
-			@RequestParam(name="choice", defaultValue= "everyspots") String selector,
+			/* @RequestParam(name="choice", defaultValue= "everyspots") String selector, */
 			@RequestParam(name="id", defaultValue= "") Long spotId,
-			@SessionAttribute(required=false, name="userEmail") String userEmail
+			@SessionAttribute(required=false, name="userEmail") String userEmail,		
+			@RequestParam(name="checkbox_id", defaultValue= "off") String checkbox_id,
+			@RequestParam(name="checkbox_name", defaultValue= "off") String checkbox_name,
+			@RequestParam(name="checkbox_lieu", defaultValue= "off") String checkbox_lieu,
+			@RequestParam(name="checkbox_cotation", defaultValue= "off") String checkbox_cotation,
+			@RequestParam(name="checkbox_equipped", defaultValue= "off") String checkbox_equipped,
+			@RequestParam(name="checkbox_official", defaultValue= "off") String checkbox_official,
+			@RequestParam(name="checkbox_madeBy", defaultValue= "off") String checkbox_madeBy,
+			@RequestParam(name="checkbox_secteur_nbre", defaultValue= "off") String checkbox_secteur_nbre
 			) {
+		
 		ModelAndView modelView = new ModelAndView();
+		List <Spot> spots = new ArrayList<>();
+		if(spotId == null){
+		spots = spotService.findBySpotContainsWithParam(mc, checkbox_id, checkbox_name, checkbox_lieu, checkbox_cotation, checkbox_equipped,
+		checkbox_official, checkbox_madeBy, checkbox_secteur_nbre);
+		}
+		else if(spotId != null) {
+			if(spotService.findById(spotId) != null) {
+				spots.add(spotService.findById(spotId));
+				checkbox_id = "on";
+				mc = Long.toString(spotId);
+				
+			}
+			else {
+				//error reference to do
+			}
+		}
+		
+		
 		List<String> listChoices = new ArrayList<>();
-		Page <Spot> spots;
+		
+		
+		/*
 		String parameterToGetTheSpotResearch;
+		Page <Spot> spots;
 		if (spotId == null){
 			listChoices = listOfChoices();	
 			parameterToGetTheSpotResearch = comparingChoices(listChoices, selector);
@@ -103,6 +133,10 @@ public class SpotController {
 			spotsList.add(spot);
 			spots = new PageImpl<>(spotsList);
 		}
+		*/
+		
+		
+		
 		if(userEmail != null) {
 			User user = userService.findUserByEmail(userEmail);
 			Set<Role> userRoles = user.getRoles();
@@ -119,12 +153,22 @@ public class SpotController {
 			modelView.addObject("role","MEMBER");			
 			}
 		}
-		modelView.addObject("pages",new int[spots.getTotalPages()]);		
-		modelView.addObject("spotlist", spots.getContent());
-		modelView.addObject("currentPage",page);
+		modelView.addObject("checkbox_id", checkbox_id);
+		modelView.addObject("checkbox_name", checkbox_name);
+		modelView.addObject("checkbox_lieu", checkbox_lieu);
+		modelView.addObject("checkbox_cotation", checkbox_cotation);
+		modelView.addObject("checkbox_equipped", checkbox_equipped);
+		modelView.addObject("checkbox_id", checkbox_id);
+		modelView.addObject("checkbox_official", checkbox_official);
+		modelView.addObject("checkbox_madeBy", checkbox_madeBy);
+		modelView.addObject("checkbox_secteur_nbre", checkbox_secteur_nbre);
+		modelView.addObject("spotlist", spots);
+		// modelView.addObject("pages",new int[spots.getTotalPages()]);		
+		// modelView.addObject("spotlist", spots.getContent());
+	//	modelView.addObject("currentPage",page);
 		modelView.addObject("motCle", mc);
 		modelView.addObject("choices", listChoices);
-		modelView.addObject("selector", selector);
+		// modelView.addObject("selector", selector);
 		modelView.setViewName("/spot/listespot");
 		return modelView;
 	}
@@ -183,7 +227,7 @@ public class SpotController {
 	
 	@RequestMapping(value={"/deletespot"}, method=RequestMethod.GET)
 	public ModelAndView delete(@RequestParam(name="id") Long spotId, 
-			String motCle, int page,
+			String motCle,
 			@SessionAttribute("userEmail") String userEmail
 			) {
 		ModelAndView modelView = new ModelAndView();
@@ -201,7 +245,7 @@ public class SpotController {
 	
 	@RequestMapping(value={"/spotofficiel"}, method=RequestMethod.GET)
 	public ModelAndView spotBecomeOfficialOrNot(@RequestParam(name="id") Long spotId,
-			String motCle, int page,
+			@RequestParam(name="motCle", defaultValue= "") String mc,
 			@SessionAttribute("userEmail") String userEmail) {
 		ModelAndView modelView = new ModelAndView();
 		User user = userService.findUserByEmail(userEmail);
@@ -224,7 +268,7 @@ public class SpotController {
 				spot.setIs_official(true);
 			}			
 			spotRepository.save(spot);
-			modelView.setViewName("redirect:/listespot");
+			modelView.setViewName("redirect:/listespot?id="+spotId);
 		}
 		else {
 			modelView.setViewName("errors/access_denied");
@@ -232,6 +276,12 @@ public class SpotController {
 		return modelView;
 	}
 
+	
+	
+	
+	
+	
+	/*
 	public List<String> listOfChoices(){	
 		String choice1 = "Tous les spots (peu importe si équipé ou officiel)"; 
 		String choice2 = "Le spot est officiel et il est equipé";
@@ -267,9 +317,8 @@ public class SpotController {
 		}	
 		return parameterToGetTheSpot;
 	}
-	
+	*/
 
-	
 }
 
 

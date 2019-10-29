@@ -83,7 +83,7 @@ public class TopoController {
 			}
 		topo.setUserOwnerOfTheTopo(userService.findUserByEmail(userEmail));	
 		topoService.saveTopo(topo);	
-		modelView.setViewName("topo/createtopo");
+		modelView.setViewName("redirect:/listetopo");
 		}
 		return modelView;
 	}
@@ -173,6 +173,9 @@ public class TopoController {
 			topoUpdate.setTopo_description(topo.getTopo_description());		
 			topoUpdate.setIs_available(topo.isIs_available());
 			topoUpdate.setTopo_date_parution(topo.getTopo_date_parution());
+			if(topo.isIs_available() == true) {
+				topoUpdate.setUserReservingTheTopo(null);
+			}		
 			topoRepository.save(topoUpdate);
 			modelView.setViewName("redirect:/listetopo");	
 		}
@@ -201,6 +204,9 @@ public class TopoController {
 			topoUpdate.setTopo_description(topo.getTopo_description());		
 			topoUpdate.setIs_available(topo.isIs_available());
 			topoUpdate.setTopo_date_parution(topo.getTopo_date_parution());
+			if(topo.isIs_available() == true) {
+				topoUpdate.setUserReservingTheTopo(null);
+			}	
 			topoRepository.save(topoUpdate);
 			modelView.setViewName("redirect:/userlistetopo");	
 		}

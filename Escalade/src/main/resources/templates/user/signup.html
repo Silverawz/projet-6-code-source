@@ -27,25 +27,25 @@
 
 			<div class="row">
 				<div class="col-md-3 field-label-responsive">
-					<label for="firstname">First name</label>
+					<label for="firstname">First name (3 char to 30 max)</label>
 				</div>
 				<div class="col-md-6">
 					<div class="input-group-addon" style="width: 2.6rem">
 						<i class="fa fa-user"></i>
 					</div>
-					<input type="text" th:field="*{firstname}" class="form-control" id="firstname" placeholder="First name" required autofocus />
+					<input type="text" th:field="*{firstname}" class="form-control" id="firstname" placeholder="First name" pattern="[a-zA-Z0-9]{3,30}" required autofocus />
 				</div>
 			</div>
 
 			<div class="row">
 				<div class="col-md-3 field-label-responsive">
-					<label for="name">Last name</label>
+					<label for="name">Last name (3 char to 30 max)</label>
 				</div>
 				<div class="col-md-6">
 					<div class="input-group-addon" style="width: 2.6rem">
 						<i class="fa fa-user"></i>
 					</div>
-					<input type="text" th:field="*{lastname}" class="form-control" id="Lastname" placeholder="Last name" required autofocus />
+					<input type="text" th:field="*{lastname}" class="form-control" id="Lastname" placeholder="Last name" pattern="[a-zA-Z0-9]{3,30}" required autofocus />
 				</div>
 			</div>
 
@@ -57,7 +57,7 @@
 					<div class="input-group-addon" style="width: 2.6rem">
 						<i class="fa fa-at"></i>
 					</div>
-					<input type="email" th:field="*{email}" class="form-control" id="email" placeholder="username@exemple.com" required autofocus />
+					<input type="email" th:field="*{email}" class="form-control" id="email" placeholder="username@exemple.com" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" required autofocus />
 				</div>
 				<div class="col-md-3">
 					<div class="form-control-feedback">
@@ -68,13 +68,13 @@
 
 			<div class="row">
 				<div class="col-md-3 field-label-responsive">
-					<label for="password">Password</label>
+					<label for="password">Password (3 char to 30 max)</label>
 				</div>
 				<div class="col-md-6">
 					<div class="input-group-addon" style="width: 2.6rem">
 						<i class="fa fa-at"></i>
 					</div>
-					<input type="password" th:field="*{password}" class="form-control" id="password" placeholder="Password" required autofocus />
+					<input type="password" th:field="*{password}" class="form-control" id="password" placeholder="Password" pattern="[a-zA-Z0-9]{5,30}" required autofocus />
 				</div>
 			</div>
 			<div class="row">

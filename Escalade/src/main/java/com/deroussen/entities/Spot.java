@@ -19,7 +19,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name="spot")
-public class Spot {
+public class Spot implements java.lang.Comparable<Spot>{
 	
 	@Id @GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long spot_id;
@@ -139,6 +139,13 @@ public class Spot {
 
 	public void setIs_official(boolean is_official) {
 		this.is_official = is_official;
+	}
+
+
+	@Override
+	public int compareTo(Spot o) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	

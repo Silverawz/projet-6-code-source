@@ -5,7 +5,18 @@
 	layout:decorate="layout">
 <head>
 <meta charset="utf-8">
-
+<style>
+.checkboxes {
+      text-align:center;
+     }
+    .checkboxes input{
+      margin: 0px 0px 0px 0px;
+     }
+     .checkboxes label{
+       margin: 0px 20px 0px 3px;
+     }
+}
+</style>
 
 
     
@@ -18,12 +29,62 @@
 			<div class="panel panel-primary">
 				<div class="panel-body">
 					<form th:action="@{/listespot}" method="get">
-						<br>
-						<div class="form-group">
+						<!--  <div class="form-group">
 						
-						
-						<label for="control-label">Recherche avancée</label>	
-								
+							<label for="control-label">Recherche personnalisée</label>	
+
+-->						
+							 <label for="control-label">Recherche personnalisée avec mot clé</label>
+							 
+
+							 <div class="checkboxes">
+							 
+							 <label class = "checkbox-inline">
+          				  	 	<input type="checkbox" name="checkbox_id" th:checked="${checkbox_id}"/> ID
+					         </label>
+					         
+					         <label class = "checkbox-inline">
+					            <input type="checkbox" name="checkbox_name" th:checked="${checkbox_name}"/> Nom
+					         </label> 			
+					         			 
+					         <label class = "checkbox-inline">
+					            <input type="checkbox" name="checkbox_lieu" th:checked="${checkbox_lieu}"/> Lieu
+					         </label> 	
+					         
+					         <label class = "checkbox-inline">
+					            <input type="checkbox" name="checkbox_cotation" th:checked="${checkbox_cotation}"/> Cotation
+					         </label> 
+					         
+					         <label class = "checkbox-inline">
+					            <input type="checkbox" name="checkbox_equipped" th:checked="${checkbox_equipped}"/> Equipé
+					         </label> 	
+					         
+					         <label class = "checkbox-inline">
+					            <input type="checkbox" name="checkbox_official" th:checked="${checkbox_official}"/> Officiel
+					         </label> 	
+					         
+					         <label class = "checkbox-inline">
+					            <input type="checkbox" name="checkbox_madeBy" th:checked="${checkbox_madeBy}"/> Créer par
+					         </label> 	
+					         		         		
+					         <label class = "checkbox-inline">
+					            <input type="checkbox" name="checkbox_secteur_nbre" th:checked="${checkbox_secteur_nbre}"/> Nbre de secteur(s)
+					         </label> 	
+					         
+					         </div>
+					         		
+					         <br>		   
+							<label class= "">Mot clé :</label> <input type="text" name="motCle" th:value="${motCle}">	
+								<button type="submit" class="btn btn-primary">Chercher</button>
+								      
+							<br>
+	
+
+  
+  
+  
+  
+								<!--  
 							<select name="choice" id="choice">												
 								<option th:each="c:${choices}" th:value="${c}" th:text="${c}" th:selected="${c.equals(selector)}">
 								</option>
@@ -31,7 +92,8 @@
 								
 						<label>Mot clé :</label> <input type="text" name="motCle"th:value="${motCle}">	
 						<button type="submit" class="btn btn-primary">Chercher</button>
-						</div>	
+						
+						</div>		-->
 					</form>			
 				</div>
 				<div class="panel-heading">Liste des sites d'escalade</div>
@@ -69,18 +131,18 @@
 							Modifier le spot</a>
 							</td>
 							<td th:if="${userEmail == s.user.getEmail()}">
-							<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletespot(id=${s.spot_id}, page=${currentPage}, motCle=${motCle})}">
+							<a onclick="return confirm('Etes vous sur?')" th:href="@{/deletespot(id=${s.spot_id}, motCle=${motCle})}">
 							Supprimer le spot</a>
 							</td>
 							<td><a th:href="@{/listecommentaire(id=${s.spot_id})}">
 							Voir le(s) commentaires(s)</a>
 							</td>
 							<td th:if="${s.is_official == false and role != null}">
-							<a th:href="@{/spotofficiel(id=${s.spot_id}, page=${currentPage}, motCle=${motCle})}">
+							<a th:href="@{/spotofficiel(id=${s.spot_id}, motCle=${motCle})}">
 							Passer "Officiel"</a>
 							</td>
 							<td th:if="${s.is_official == true and role != null}">
-							<a th:href="@{/spotofficiel(id=${s.spot_id}, page=${currentPage}, motCle=${motCle})}">
+							<a th:href="@{/spotofficiel(id=${s.spot_id}, motCle=${motCle})}">
 							Retirer "Officiel"</a>
 							</td>		
 						</tr>
