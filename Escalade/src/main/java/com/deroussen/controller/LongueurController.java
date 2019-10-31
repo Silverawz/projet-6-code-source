@@ -73,9 +73,20 @@ public class LongueurController {
 	
 	
 	@RequestMapping(value={"/createlongueur"}, method=RequestMethod.GET)
-	public ModelAndView formGet(@RequestParam(name="id") Long voieId
+	public ModelAndView formGet(@RequestParam(name="id") Long voieId,
+			@RequestParam(name="errorname", defaultValue="") String errorname,
+			@RequestParam(name="errorcotation", defaultValue="") String errorcotation
 			) {
-		ModelAndView modelView = new ModelAndView();	
+		ModelAndView modelView = new ModelAndView();
+		if(errorname.equals("error_longueur_name")) {
+			modelView.addObject("error_longueur_name", "error");
+		}
+		if(errorname.equals("error_longueur_name_already_taken")){
+			modelView.addObject("error_longueur_name_already_taken", "error");
+		}
+		if(errorcotation.equals("error_longueur_cotation")) {
+			modelView.addObject("error_longueur_cotation", "error");
+		}
 		Voie voie = voieService.findById(voieId);
 		Long secteurId = voie.getSecteur().getSecteur_id();
 		Secteur secteur = secteurService.findById(secteurId);
@@ -103,20 +114,38 @@ public class LongueurController {
 		List <Longueur> longueurs = longueurService.findByVoieId(voieId);
 		int sizeList = longueurs.size();
 		int matchesWithSizeList = 0;
+		int errorDetected = 0;
 		C:for(int i = 0; i < longueurs.size(); i++) {
 			matchesWithSizeList++;
 			if(longueurs.get(i).getLongueur_name()== longueur.getLongueur_name()) {
 				bindingResult.rejectValue("longueurname","error.spot","The longueur name already exists!");
+				errorDetected++;
 				break C;
 			}
 		}
-		if(bindingResult.hasErrors()) {
+		if(errorDetected != 0) {
+			modelView.addObject("errorname", "error_longueur_name_already_taken");
+		}
+		if(longueur.getLongueur_name().length() > 30 || longueur.getLongueur_name().length() < 3) {
+			modelView.addObject("errorname", "error_longueur_name");
+			errorDetected++;
+		}
+
+		if(cotationVerification(longueur.getLongueur_cotation()) == false) {	
+			modelView.addObject("errorcotation", "error_longueur_cotation");
+			errorDetected++;
+			}
+
+		if(errorDetected != 0) {
 			modelView.setViewName("redirect:/createlongueur?id="+voieId);
 		}
-		if (sizeList == matchesWithSizeList) {
-			longueur.setVoie(voieService.findById(voieId));
-			longueurService.saveLongueur(longueur);
-			modelView.setViewName("redirect:/listelongueur?id="+voieId);
+		
+		if(errorDetected == 0) {
+			if (sizeList == matchesWithSizeList) {
+				longueur.setVoie(voieService.findById(voieId));
+				longueurService.saveLongueur(longueur);
+				modelView.setViewName("redirect:/listelongueur?id="+voieId);
+			}	
 		}		
 		return modelView;
 	}
@@ -148,9 +177,17 @@ public class LongueurController {
 	
 	@RequestMapping(value={"/changelongueur"}, method=RequestMethod.GET)
 	public ModelAndView changeVoieGet(@RequestParam(name="id") Long longueurId,
-			@SessionAttribute("userEmail") String userEmail
+			@SessionAttribute("userEmail") String userEmail,
+			@RequestParam(name="errorname", defaultValue="") String errorname,
+			@RequestParam(name="errorcotation", defaultValue="") String errorcotation
 			) {
 		ModelAndView modelView = new ModelAndView();
+		if(errorname.equals("error_longueur_name")) {
+			modelView.addObject("error_longueur_name", "error");
+		}
+		if(errorcotation.equals("error_longueur_cotation")) {
+			modelView.addObject("error_longueur_cotation", "error");
+		}
 		Longueur longueur = longueurService.findByid(longueurId);
 		Long voieId = longueur.getVoie().getVoie_id();
 		Voie voie = voieService.findById(voieId);
@@ -184,6 +221,17 @@ public class LongueurController {
 	public ModelAndView changeVoierPost(@Valid Longueur longueur,  BindingResult bindingResult
 			) {
 		ModelAndView modelView = new ModelAndView();
+		int errorDetected = 0;
+		if(longueur.getLongueur_name().length() > 30 || longueur.getLongueur_name().length() < 3) {
+			modelView.addObject("errorname", "error_longueur_name");
+			errorDetected++;
+		}
+
+		if(cotationVerification(longueur.getLongueur_cotation()) == false) {	
+			modelView.addObject("errorcotation", "error_longueur_cotation");
+			errorDetected++;
+		}
+
 		Longueur longueurUpdate = longueurRepository.getOne(longueur.getLongueur_id());
 		Longueur longueurResearchByName = longueurRepository.findByLongueur_name(longueur.getLongueur_name());
 		Long idVerificationLongueurrResearched = (long) -1;
@@ -191,20 +239,48 @@ public class LongueurController {
 			idVerificationLongueurrResearched = longueurResearchByName.getLongueur_id();
 		}
 		Long idVerificationSecteurUpdated = longueur.getLongueur_id(); 
-		Long voidId = longueurUpdate.getVoie().getVoie_id();
-		// if both id corresponds then the name hasn't been changed but other informations may have been
-		if(longueurResearchByName == null || idVerificationLongueurrResearched.equals(idVerificationSecteurUpdated)) {
-			longueurUpdate.setLongueur_name(longueur.getLongueur_name());
-			longueurUpdate.setLongueur_cotation(longueur.getLongueur_cotation());
-			longueurRepository.save(longueurUpdate);
-			modelView.setViewName("redirect:/listelongueur?id="+voidId);
+		Long voieId = longueurUpdate.getVoie().getVoie_id();
+		if(errorDetected != 0) {
+			modelView.setViewName("redirect:/changelongueur?id="+longueur.getLongueur_id());
 		}
-		else {
-			modelView.setViewName("redirect:/listelongueur?id="+voidId);
+		// if both id corresponds then the name hasn't been changed but other informations may have been
+		if(errorDetected == 0) {
+			if(longueurResearchByName == null || idVerificationLongueurrResearched.equals(idVerificationSecteurUpdated)) {
+				longueurUpdate.setLongueur_name(longueur.getLongueur_name());
+				longueurUpdate.setLongueur_cotation(longueur.getLongueur_cotation());
+				longueurRepository.save(longueurUpdate);
+				modelView.setViewName("redirect:/listelongueur?id="+voieId);
+			}
 		}
 		return modelView;
 	}
 	
+	
+	
+	/* Required:
+	[1-4]{1}|[5a]{2}|[5b]{2}|[5c]{2}|
+	[6a]{2}|[6a+]{3}|[6b]{2}|[6b+]{3}|[6c]{2}|[6c+]{3}|
+	[7a]{2}|[7a+]{3}|[7b]{2}|[7b+]{3}|[7c]{2}|[7c+]{3}|
+	[8a]{2}|[8a+]{3}|[8b]{2}|[8b+]{3}|[8c]{2}|[8c+]{3}|
+	[9a]{2}|[9a+]{3}|[9b]{2}|[9b+]{3}|[9c]{2}
+	*/
+	public boolean cotationVerification(String cotationInput) {
+		if(cotationInput.equals("1") || cotationInput.equals("2") || cotationInput.equals("3") || cotationInput.equals("4")
+				|| cotationInput.equals("5a") || cotationInput.equals("5b")|| cotationInput.equals("5c")		
+				|| cotationInput.equals("6a") || cotationInput.equals("6a+")|| cotationInput.equals("6b")	
+				|| cotationInput.equals("6b+")|| cotationInput.equals("6c") || cotationInput.equals("6c+")	
+				|| cotationInput.equals("7a") || cotationInput.equals("7a+")|| cotationInput.equals("7b")	
+				|| cotationInput.equals("7b+")|| cotationInput.equals("7c") || cotationInput.equals("7c+")
+				|| cotationInput.equals("8a") || cotationInput.equals("8a+")|| cotationInput.equals("8b")	
+				|| cotationInput.equals("8b+")|| cotationInput.equals("8c") || cotationInput.equals("8c+")	
+				|| cotationInput.equals("9a") || cotationInput.equals("9a+")|| cotationInput.equals("9b")	
+				|| cotationInput.equals("9b+")|| cotationInput.equals("9c")){
+					return true;
+				}
+		else {
+			return false;
+		}
 
+	}
 	
 }

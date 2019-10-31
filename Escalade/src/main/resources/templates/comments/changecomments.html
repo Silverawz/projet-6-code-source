@@ -23,6 +23,11 @@ input.html-text-box {background-color:#000000;font-family:Arial;font-size:14pt;c
 					<div class="panel-body">	
 						<div class="panel-heading">Modifier le commentaire (10 caractères minimum - 255 maximum)</div>
 						
+						<div class="col-md-3">
+							<div class="form-control-feedback">
+								<span class="text-danger align-middle" th:if="${error != null}">Error size must be between 10 and 255 !</span>
+							</div>
+						</div>
 						
 						<form method="post" th:action="@{/changecomment(id=${commentaire_id})}">
 							<textarea name="description" th:value="description" th:text="${description}" cols="60" rows="5" class="html-text-box">		

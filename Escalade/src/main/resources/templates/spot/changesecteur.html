@@ -36,6 +36,12 @@
 						<div class="form-group">
 							<label class="control-label">Nom du secteur :       </label> 
 								<input class="form-control" type="text" name="secteur_name" th:value="${secteur_name}" pattern="[A-Za-z]{3,30}" required>
+								
+								<div class="col-md-3">
+									<div class="form-control-feedback">
+										<span class="text-danger align-middle" th:if="${error_secteur_name != null}">Error size must be between 3 and 30 !</span>
+									</div>
+								</div>
 						</div>			
 											
 						<button type="submit" class="btn btn-primary">Modifier le secteur</button>

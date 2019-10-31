@@ -37,8 +37,12 @@ public class CommentaireController {
 	
 	@RequestMapping(value={"/listecommentaire"}, method=RequestMethod.GET)
 	public ModelAndView formGet(@RequestParam(name="id") Long spotId,
-			@SessionAttribute(required=false, name="userEmail") String userEmail) {
+			@SessionAttribute(required=false, name="userEmail") String userEmail,
+			@RequestParam(name="error", defaultValue="") String error) {
 		ModelAndView modelView = new ModelAndView();	
+		if(error.equals("Le commentaire doit faire entre 10 et 255 caractères!")) {
+			modelView.addObject("error", "error");
+		}
 		List<Commentaire> commentaires = commentaireService.findBySpotId(spotId);
 		Collections.reverse(commentaires);
 		if(userEmail != null) {
@@ -61,6 +65,7 @@ public class CommentaireController {
 			@SessionAttribute("userEmail") String userEmail) {
 		ModelAndView modelView = new ModelAndView();
 		if(commentaireDescription.length() < 10 || commentaireDescription.length() > 255) {
+			modelView.addObject("error", "Le commentaire doit faire entre 10 et 255 caractères!");
 			modelView.setViewName("redirect:/listecommentaire?id="+spotId);
 			return modelView;	
 		}
@@ -92,8 +97,12 @@ public class CommentaireController {
 	
 	@RequestMapping(value={"/changecomment"}, method=RequestMethod.GET)
 	public ModelAndView formGetChange(@RequestParam(name="id") Long commentaireId,
-			@SessionAttribute("userEmail") String userEmail) {
+			@SessionAttribute("userEmail") String userEmail,
+			@RequestParam(name="error", defaultValue="") String error) {
 		ModelAndView modelView = new ModelAndView();			
+		if(error.equals("Le commentaire doit faire entre 10 et 255 caractères!")) {
+			modelView.addObject("error", "error");
+		}
 		Commentaire commentaire = commentaireService.findByCommentaireId(commentaireId);
 		boolean result = checkIfUserIsMember(userService.findUserByEmail(userEmail));
 		if(commentaire.getUser().getEmail().equals(userEmail) || result == true){	
@@ -116,7 +125,8 @@ public class CommentaireController {
 			@SessionAttribute("userEmail") String userEmail) {
 		ModelAndView modelView = new ModelAndView();
 		if(commentaireDescription.length() < 10 || commentaireDescription.length() > 255) {
-			modelView.setViewName("redirect:/changecomments?id="+commentaireId);	
+			modelView.addObject("error", "Le commentaire doit faire entre 10 et 255 caractères!");
+			modelView.setViewName("redirect:/changecomment?id="+commentaireId);	
 		}
 		else {
 			Commentaire commentaire = commentaireRepository.findByCommentaireId(commentaireId);

@@ -22,22 +22,49 @@
 						<div class="form-group">
 							<label class="control-label">Nom du topo :       </label> 
 								<input class="form-control" type="text" name="topo_name" th:value="${topo_name}" pattern="[A-Za-z]{3,30}" required>
+								
+								<div class="col-md-3">
+									<div class="form-control-feedback">
+										<span class="text-danger align-middle" th:if="${error_topo_name != null}">Error size must be between 3 and 30 !</span>
+									</div>
+								</div>
 						</div>
 						
 						<div class="form-group">
 							<label class="control-label">Lieu :       </label> 
 								<input class="form-control" type="text" name="topo_lieu" th:value="${topo_lieu}" pattern="[A-Za-z]{3,30}" required>
+								
+								<div class="col-md-3">
+									<div class="form-control-feedback">
+										<span class="text-danger align-middle" th:if="${error_topo_lieu != null}">Error size must be between 3 and 30 !</span>
+									</div>
+								</div>
+								
 							</div>
 							
 						<div class="form-group">
 							<label class="control-label">Description :       </label> 
 								<input class="form-control" type="text" name="topo_description" th:value="${topo_description}" pattern="[A-Za-z]{10,255}" required>
+								
+								<div class="col-md-3">
+									<div class="form-control-feedback">
+										<span class="text-danger align-middle" th:if="${error_topo_description != null}">Error size must be between 10 and 255 !</span>
+									</div>
+								</div>
+								
 						</div>	
 						
 						<div class="form-group">
 							<label class="control-label">Date de parution (Format: DD.MM.YYYY):       </label> 
 								<input class="form-control" type="text" name="topo_date_parution" th:value="${topo_date_parution}" 
 								pattern="(0[1-9]|1[0-9]|2[0-9]|3[01]).(0[1-9]|1[012]).[0-9]{4}" required>
+								
+								<div class="col-md-3">
+									<div class="form-control-feedback">
+										<span class="text-danger align-middle" th:if="${error_topo_date != null}">Must be 10 char and have the good format !</span>
+									</div>
+								</div>
+								
 						</div>
 						
 						<div class="form-group">

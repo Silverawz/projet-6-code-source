@@ -1,6 +1,7 @@
 package com.deroussen.entities;
 
 import java.util.List;
+
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -14,7 +15,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Size;
+
+
 
 @Entity
 @Table(name="user")
@@ -23,6 +27,7 @@ public class User {
 	@Id @GeneratedValue(strategy= GenerationType.AUTO)
 	private Long id;
 	
+	@Email
 	@Column(name="email")
 	private String email;
 	
@@ -34,7 +39,7 @@ public class User {
 	@Column(name="lastname")
 	private String lastname;
 	
-	@Size(min=5, max =30)
+	@Size(max =255)
 	@Column(name="password")
 	private String password;
 		

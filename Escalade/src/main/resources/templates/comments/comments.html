@@ -21,8 +21,14 @@ input.html-text-box {background-color:#000000;font-family:Arial;font-size:14pt;c
 		<div th:if="${userEmail != null}">		
 				<div class="panel panel-primary">
 					<div class="panel-body">	
+					
 						<div class="panel-heading">Ecrire un commentaire pour ce spot (10 caractères minimum - 255 maximum)</div>
 						
+						<div class="col-md-3">
+							<div class="form-control-feedback">
+								<span class="text-danger align-middle" th:if="${error != null}">Error size must be between 10 and 255 !</span>
+							</div>
+						</div>
 						
 						<form method="post" th:action="@{/createcommentaire(id=${spotId})}">
 							<textarea name="description" th:value="description" cols="60" rows="5" class="html-text-box"></textarea>

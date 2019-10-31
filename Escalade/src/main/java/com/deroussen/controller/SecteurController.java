@@ -39,10 +39,14 @@ public class SecteurController {
 	
 	@RequestMapping(value={"/createsecteur"}, method=RequestMethod.GET)
 	public ModelAndView formGet(
-			@RequestParam(name="id") Long spotId
+			@RequestParam(name="id") Long spotId,
+			@RequestParam(name="error", defaultValue="") String error
 			) {
 		ModelAndView modelView = new ModelAndView();	
 		Spot spot = spotService.findById(spotId);
+		if(error.equals("error_secteur_name")) {
+			modelView.addObject("error_secteur_name", "error");
+		}
 		modelView.addObject("madeByUser", spot.getUser().getEmail());
 		modelView.addObject("spot_id", spot.getSpot_id());
 		modelView.addObject("spot_lieu", spot.getSpot_lieu());
@@ -62,26 +66,36 @@ public class SecteurController {
 		List <Secteur> secteurs = secteurService.findBySpotId(spotId);
 		int numberOfSecteur = secteurs.size();
 		int numberThatMustMatchesWithNumberOfSecteurs = 0;
+		int errorDetected = 0;
 		C:for(int i = 0; i < secteurs.size(); i++) {
 			numberThatMustMatchesWithNumberOfSecteurs++;
 			if(secteurs.get(i).getSecteur_name() == secteur.getSecteur_name()) {
 				bindingResult.rejectValue("secteurname","error.secteur","The secteur name already exists!");
+				errorDetected++;
 				break C;
 			}
+		}
+		if(secteur.getSecteur_name().length() > 30 || secteur.getSecteur_name().length() < 3) {
+			bindingResult.rejectValue("secteur_name","error.spot","Secteurname size incorrect !");
+			modelView.addObject("error", "error_secteur_name");
+			errorDetected++;
 		}
 		if(bindingResult.hasErrors()) {
 			modelView.setViewName("redirect:/createsecteur?id="+spotId);
 		}
-		if (numberOfSecteur == numberThatMustMatchesWithNumberOfSecteurs) {
-			secteur.setSpot(spotService.findById(spotId));
-			secteurService.saveSecteur(secteur);
-			if(continueToCreateVoie == true) {
-				modelView.setViewName("redirect:/createvoie?id="+secteur.getSecteur_id());
-			}
-			else {
-				modelView.setViewName("redirect:/listesecteur?id="+spotId);
-			}	
-		}		
+		if(errorDetected == 0) {
+			if (numberOfSecteur == numberThatMustMatchesWithNumberOfSecteurs) {
+				secteur.setSpot(spotService.findById(spotId));
+				secteurService.saveSecteur(secteur);
+				if(continueToCreateVoie == true) {
+					modelView.setViewName("redirect:/createvoie?id="+secteur.getSecteur_id());
+				}
+				else {
+					modelView.setViewName("redirect:/listesecteur?id="+spotId);
+				}	
+			}		
+		}
+	
 		return modelView;
 	}
 	
@@ -129,9 +143,13 @@ public class SecteurController {
 	
 	@RequestMapping(value={"/changesecteur"}, method=RequestMethod.GET)
 	public ModelAndView changeSecteurGet(@RequestParam(name="id") Long secteurId,
-			@SessionAttribute("userEmail") String userEmail
+			@SessionAttribute("userEmail") String userEmail, 
+			@RequestParam(name="error", defaultValue="") String error
 			) {
 		ModelAndView modelView = new ModelAndView();	
+		if(error.equals("error_secteur_name")) {
+			modelView.addObject("error_secteur_name", "error");
+		}
 		Secteur secteur = secteurService.findById(secteurId);
 		Long spotId = secteur.getSpot().getSpot_id();
 		Spot spot = spotService.findById(spotId);
@@ -153,22 +171,31 @@ public class SecteurController {
 	public ModelAndView changeSecteurPost(@Valid Secteur secteur, BindingResult bindingResult
 			) {
 		ModelAndView modelView = new ModelAndView();
-		Secteur secteurUpdate = secteurRepository.getOne(secteur.getSecteur_id());	
-		Secteur secteurResearchByName = secteurRepository.findBySecteur_name(secteur.getSecteur_name());
-		Long idVerificationSecteurResearched = (long) -1;
-		if(secteurResearchByName != null) {
-			idVerificationSecteurResearched = secteurResearchByName.getSecteur_id();
+		int errorDetected = 0;
+		if(secteur.getSecteur_name().length() > 30 || secteur.getSecteur_name().length() < 3) {
+			bindingResult.rejectValue("secteur_name","error.spot","Secteurname size incorrect !");
+			modelView.addObject("error", "error_secteur_name");
+			modelView.setViewName("redirect:/changesecteur?id="+secteur.getSecteur_id());
+			errorDetected++;
 		}
-		Long idVerificationSecteurUpdated = secteur.getSecteur_id();
-		Long spotId = secteurUpdate.getSpot().getSpot_id();
-		// if both id corresponds then the name hasn't been changed but other informations may have been
-		if(secteurResearchByName == null || idVerificationSecteurResearched.equals(idVerificationSecteurUpdated)) {
-			secteurUpdate.setSecteur_name(secteur.getSecteur_name());		
-			secteurRepository.save(secteurUpdate);	
-			modelView.setViewName("redirect:/listesecteur?id="+spotId);
-		}
-		else {
-			modelView.setViewName("redirect:/listesecteur?id="+spotId);
+		if(errorDetected == 0) {
+			Secteur secteurUpdate = secteurRepository.getOne(secteur.getSecteur_id());	
+			Secteur secteurResearchByName = secteurRepository.findBySecteur_name(secteur.getSecteur_name());
+			Long idVerificationSecteurResearched = (long) -1;
+			if(secteurResearchByName != null) {
+				idVerificationSecteurResearched = secteurResearchByName.getSecteur_id();
+			}
+			Long idVerificationSecteurUpdated = secteur.getSecteur_id();
+			Long spotId = secteurUpdate.getSpot().getSpot_id();
+			// if both id corresponds then the name hasn't been changed but other informations may have been
+			if(secteurResearchByName == null || idVerificationSecteurResearched.equals(idVerificationSecteurUpdated)) {
+				secteurUpdate.setSecteur_name(secteur.getSecteur_name());		
+				secteurRepository.save(secteurUpdate);	
+				modelView.setViewName("redirect:/listesecteur?id="+spotId);
+			}
+			else {
+				modelView.setViewName("redirect:/listesecteur?id="+spotId);
+			}
 		}
 		return modelView;
 	}

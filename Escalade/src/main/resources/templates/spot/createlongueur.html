@@ -71,6 +71,17 @@
 							<div class="form-group">
 								<label class="control-label">Nom de la longueur :</label> 
 								<input class="form-control" type="text" name="longueur_name" th:value="${longueur_name}" pattern="[A-Za-z]{3,30}" required>
+								
+										<div class="col-md-3">
+											<div class="form-control-feedback">
+												<span class="text-danger align-middle" th:if="${error_longueur_name != null}">Error size must be between 3 and 30 !</span>
+											</div>
+										</div>
+										<div class="col-md-3">
+											<div class="form-control-feedback">
+												<span class="text-danger align-middle" th:if="${error_longueur_name_already_taken != null}">Name already exists !</span>
+											</div>
+										</div>
 							</div>	
 									
 							<div class="form-group">
@@ -80,6 +91,13 @@
 								[7a]{2}|[7a+]{3}|[7b]{2}|[7b+]{3}|[7c]{2}|[7c+]{3}|
 								[8a]{2}|[8a+]{3}|[8b]{2}|[8b+]{3}|[8c]{2}|[8c+]{3}|
 								[9a]{2}|[9a+]{3}|[9b]{2}|[9b+]{3}|[9c]{2}" required>
+								
+											<div class="col-md-3">
+												<div class="form-control-feedback">
+													<span class="text-danger align-middle" th:if="${error_longueur_cotation != null}">Error must respect the format !</span>
+												</div>
+											</div>
+								
 							</div>		
 									
 							<button type="submit" class="btn btn-primary">Enregistrer</button>

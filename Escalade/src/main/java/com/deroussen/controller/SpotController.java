@@ -2,14 +2,12 @@ package com.deroussen.controller;
 
 
 import java.util.ArrayList;
+
 import java.util.List;
 import java.util.Set;
 
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.ModelAndView;
+
 import com.deroussen.dao.SpotRepository;
 import com.deroussen.entities.Role;
 import com.deroussen.entities.Spot;
@@ -41,6 +40,8 @@ public class SpotController {
 	@RequestMapping(value={"/createspot"}, method=RequestMethod.GET)
 	public ModelAndView formGet() {
 		ModelAndView modelView = new ModelAndView();
+		Spot spot = new Spot();
+		modelView.addObject("spot",  spot);
 		modelView.setViewName("spot/createspot");
 		return modelView;
 	}
@@ -51,14 +52,25 @@ public class SpotController {
 			@RequestParam(name="continueToCreateSecteur") boolean continueAndCreateASecteur
 			) {
 		ModelAndView modelView = new ModelAndView();
-		Spot spotExists = spotService.findSpotByName(spot.getSpot_name());	
+		Spot spotExists = spotService.findSpotByName(spot.getSpot_name());		
+		int errorDetected = 0;
 		if(spotExists != null) {
-			bindingResult.rejectValue("spotname","This spotname already exists!"); //  TODO
+			bindingResult.rejectValue("spotname","error.spot","This spotname already exists!");
+			errorDetected++;
+		}
+		if(spot.getSpot_name().length() > 30 || spot.getSpot_name().length() < 3 && errorDetected == 0) {
+			bindingResult.rejectValue("spot_name","error.spot","Spotname size incorrect !");
+			errorDetected++;
+		}
+		if(spot.getSpot_lieu().length() > 30 || spot.getSpot_lieu().length() < 3 && errorDetected == 0) {
+			bindingResult.rejectValue("spot_lieu","error.spot","Spotlieu size incorrect !");
+			errorDetected++;
 		}
 		if(bindingResult.hasErrors()) {
 			modelView.setViewName("/spot/createspot"); 
 		}
-		if(spotExists == null) {
+		
+		if(spotExists == null && errorDetected == 0) {
 			if(spot.isIs_equipped() == true) {
 				spot.setIs_equipped(true);
 			}
@@ -68,7 +80,6 @@ public class SpotController {
 			spot.setIs_official(false);		
 			spot.setUser(userService.findUserByEmail(userEmail));
 			spotService.saveSpot(spot);
-			// model.addObject("msg","The spot has been created successfully!"); // TODO
 			if(continueAndCreateASecteur == true) {
 				modelView.setViewName("redirect:/createsecteur?id="+spot.getSpot_id());
 			}
@@ -175,9 +186,19 @@ public class SpotController {
 	  
 	
 	@RequestMapping(value={"/changespot"}, method=RequestMethod.GET)
-	public ModelAndView changeSpotGet(@RequestParam(name="id") Long spotId) {
+	public ModelAndView changeSpotGet(@RequestParam(name="id") Long spotId,
+			@RequestParam(name="error", defaultValue="") String error) {
 		ModelAndView modelView = new ModelAndView();
+		if(error.equals("spot_name")) {
+			modelView.addObject("error_spot_name",  "spot_name");
+		}
+		else if(error.equals("spot_lieu")) {
+			modelView.addObject("error_spot_lieu",  "spot_lieu");	
+		}				
+		
 		Spot spot = spotRepository.getOne(spotId);
+		Spot newspot = new Spot();
+		modelView.addObject("spot",  newspot);
 		modelView.addObject("spot_id", spotId);
 		modelView.addObject("spot_lieu", spot.getSpot_lieu());
 		modelView.addObject("spot_name", spot.getSpot_name());
@@ -193,34 +214,55 @@ public class SpotController {
 			) {
 		ModelAndView modelView = new ModelAndView();
 		Spot spotUpdate = spotRepository.getOne(spot.getSpot_id());
+		
+		int errorDetected = 0;
+		if(spot.getSpot_name().length() > 30 || spot.getSpot_name().length() < 3 && errorDetected == 0) {
+			bindingResult.rejectValue("spot_name","error.spot","Spotname size incorrect !");
+			modelView.addObject("error","spot_name");
+			errorDetected++;
+		}
+		if(spot.getSpot_lieu().length() > 30 || spot.getSpot_lieu().length() < 3 && errorDetected == 0) {
+			bindingResult.rejectValue("spot_lieu","error.spot","Spotlieu size incorrect !");
+			modelView.addObject("error","spot_lieu");
+			errorDetected++;
+		}
+		
+		if(bindingResult.hasErrors()) {	
+			modelView.setViewName("redirect:/changespot?id="+spot.getSpot_id()); 
+		}
+		
+		
 		Spot spotResearchByName = spotRepository.findBySpot_name(spot.getSpot_name());
 		Long idVerificationSpotResearched = (long) -1;
 		if(spotResearchByName != null) {
 			idVerificationSpotResearched = spotResearchByName.getSpot_id();
 		}	
 		Long idVerificationSpotUpdated = spot.getSpot_id();
-		// if both id corresponds then the name hasn't been changed but other informations may have been
-		if(spotRepository.findBySpot_name(spot.getSpot_name()) == null || idVerificationSpotResearched.equals(idVerificationSpotUpdated)) {	
-			spotUpdate.setSpot_name(spot.getSpot_name());
-			spotUpdate.setSpot_lieu(spot.getSpot_lieu());
-			if(spot.isIs_equipped() == true) {
-				spotUpdate.setIs_equipped(true);
+		
+		if(errorDetected == 0) {
+			// if both id corresponds then the name hasn't been changed but other informations may have been
+			if(spotRepository.findBySpot_name(spot.getSpot_name()) == null || idVerificationSpotResearched.equals(idVerificationSpotUpdated)) {
+				spotUpdate.setSpot_name(spot.getSpot_name());
+				spotUpdate.setSpot_lieu(spot.getSpot_lieu());
+				if(spot.isIs_equipped() == true) {
+					spotUpdate.setIs_equipped(true);
+				}
+				else {
+					spotUpdate.setIs_equipped(false);
+				}
+				if(spot.isIs_official() == true) {
+					spotUpdate.setIs_official(true);
+				}
+				else {
+					spotUpdate.setIs_official(false);
+				}			
+				spotRepository.save(spotUpdate);
+				modelView.setViewName("redirect:/listespot?id="+spot.getSpot_id());		
 			}
-			else {
-				spotUpdate.setIs_equipped(false);
-			}
-			if(spot.isIs_official() == true) {
-				spotUpdate.setIs_official(true);
-			}
-			else {
-				spotUpdate.setIs_official(false);
-			}			
-			spotRepository.save(spotUpdate);
-			modelView.setViewName("redirect:/listespot?id="+spot.getSpot_id());		
+			else if (errorDetected == 0){
+				modelView.setViewName("redirect:/listespot?id="+spot.getSpot_id());
+			}	
 		}
-		else {
-			modelView.setViewName("redirect:/listespot?id="+spot.getSpot_id());
-		}		
 		return modelView;
 	}
 	

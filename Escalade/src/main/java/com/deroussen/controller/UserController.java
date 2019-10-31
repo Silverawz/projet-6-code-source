@@ -3,9 +3,11 @@ package com.deroussen.controller;
 
 
 import java.util.ArrayList;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import javax.validation.Valid;
 
@@ -59,9 +61,32 @@ public class UserController {
 	public ModelAndView createUser(@Valid User user, BindingResult bindingResult) {
 		ModelAndView modelView = new ModelAndView();
 		User userExists = userService.findUserByEmail(user.getEmail());
-		
+		int errorDetected = 0;
 		if(userExists != null) {
 			bindingResult.rejectValue("email", "error.user","This email already exists!");
+			errorDetected++;
+		}
+		if(user.getPassword().length() > 25 || user.getPassword().length() < 5 && errorDetected == 0) {
+			bindingResult.rejectValue("password", "error.user", "Password size is incorrect!");
+			errorDetected++;
+		}
+		if(user.getFirstname().length() > 30 || user.getFirstname().length() < 3 && errorDetected == 0) {
+			bindingResult.rejectValue("firstname", "error.user", "Firstname size is incorrect!");
+			errorDetected++;
+		}
+		if(user.getLastname().length() > 30 || user.getLastname().length() < 3 && errorDetected == 0) {
+			bindingResult.rejectValue("lastname", "error.user", "Firstname size is incorrect!");
+			errorDetected++;
+		}
+		if(user.getEmail().length() > 40 || user.getFirstname().length() < 5 && errorDetected == 0) {
+			bindingResult.rejectValue("email", "error.user", "Email size is incorrect!");
+			errorDetected++;
+		}
+		else if(user.getEmail().length() < 40 || user.getFirstname().length() > 5 && errorDetected == 0) {
+			if (!rfc2822.matcher(user.getEmail()).matches()) {
+				bindingResult.rejectValue("email", "error.user", "Email size is incorrect!");
+				errorDetected++;
+			}
 		}
 		if(bindingResult.hasErrors()) {
 			modelView.setViewName("user/signup");
@@ -207,4 +232,7 @@ public class UserController {
 		return modelView;
 	}
 	
+	private static final Pattern rfc2822 = Pattern.compile(
+	        "^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+	);
 }

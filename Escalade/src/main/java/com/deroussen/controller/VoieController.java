@@ -43,9 +43,20 @@ public class VoieController {
 	
 	
 	@RequestMapping(value={"/createvoie"}, method=RequestMethod.GET)
-	public ModelAndView formGet(@RequestParam(name="id") Long secteurId	
+	public ModelAndView formGet(@RequestParam(name="id") Long secteurId,
+			@RequestParam(name="errorname", defaultValue="") String errorname,
+			@RequestParam(name="errorcotation", defaultValue="") String errorcotation
 			) {
 		ModelAndView modelView = new ModelAndView();
+		if(errorname.equals("error_voie_name")) {
+			modelView.addObject("error_voie_name", "error");
+		}
+		if(errorname.equals("error_voie_name_already_taken")){
+			modelView.addObject("error_voie_name_already_taken", "error");
+		}
+		if(errorcotation.equals("error_voie_cotation")) {
+			modelView.addObject("error_voie_cotation", "error");
+		}
 		Secteur secteur = secteurService.findById(secteurId);
 		Long spotId = secteur.getSpot().getSpot_id();
 		Spot spot = spotService.findById(spotId);
@@ -71,28 +82,46 @@ public class VoieController {
 		List <Voie> voies = voieService.findBySecteurId(secteurId);
 		int sizeList = voies.size();
 		int matchesWithSizeList = 0;
+		int errorDetected = 0;
 		C:for(int i = 0; i < voies.size(); i++) {
 			matchesWithSizeList++;
 			if(voies.get(i).getVoie_name() == voie.getVoie_name()) {
 				bindingResult.rejectValue("voiename","error.voie","The voie name already exists!");
+				errorDetected++;
 				break C;
 			}
 		}
-		if(bindingResult.hasErrors()) {
-			modelView.setViewName("redirect:/createvoie?id="+secteurId);
-		}
-		if (sizeList == matchesWithSizeList) {		 
-			voie.setSecteur(secteurService.findById(secteurId));
-			voieService.saveVoie(voie);
-			if(continueToCreateLongueur == true) {
-				modelView.setViewName("redirect:/createlongueur?id="+voie.getVoie_id());
+		if(voie.getVoie_name().length() > 30 || voie.getVoie_name().length() < 3) {
+			if(errorDetected == 1) {
+				modelView.addObject("errorname", "error_voie_name_already_taken");
 			}
 			else {
-				modelView.setViewName("redirect:/listevoie?id="+secteurId);
+			modelView.addObject("errorname", "error_voie_name");
 			}
-			
-			
-		}		
+			errorDetected++;
+		}
+
+
+		if(cotationVerification(voie.getVoie_cotation()) == false) {	
+			modelView.addObject("errorcotation", "error_voie_cotation");
+			errorDetected++;
+		}
+
+		if(errorDetected != 0) {
+			modelView.setViewName("redirect:/createvoie?id="+secteurId);
+		}
+		if(errorDetected == 0) {
+			if (sizeList == matchesWithSizeList) {		 
+				voie.setSecteur(secteurService.findById(secteurId));
+				voieService.saveVoie(voie);
+				if(continueToCreateLongueur == true) {
+					modelView.setViewName("redirect:/createlongueur?id="+voie.getVoie_id());
+				}
+				else {
+					modelView.setViewName("redirect:/listevoie?id="+secteurId);
+				}
+			}	
+		}	
 		return modelView;
 	}
 	
@@ -148,9 +177,20 @@ public class VoieController {
 	
 	@RequestMapping(value={"/changevoie"}, method=RequestMethod.GET)
 	public ModelAndView changeVoieGet(@RequestParam(name="id") Long voieId,
-			@SessionAttribute("userEmail") String userEmail
+			@SessionAttribute("userEmail") String userEmail,
+			@RequestParam(name="errorname", defaultValue="") String errorname,
+			@RequestParam(name="errorcotation", defaultValue="") String errorcotation
 			) {
 		ModelAndView modelView = new ModelAndView();
+		if(errorname.equals("error_voie_name")) {
+			modelView.addObject("error_voie_name", "error");
+		}
+		if(errorname.equals("error_voie_name_already_taken")){
+			modelView.addObject("error_voie_name_already_taken", "error");
+		}
+		if(errorcotation.equals("error_voie_cotation")) {
+			modelView.addObject("error_voie_cotation", "error");
+		}
 		Voie voie = voieService.findById(voieId);
 		Long secteurId = voie.getSecteur().getSecteur_id();
 		Secteur secteur = secteurService.findById(secteurId);
@@ -179,23 +219,39 @@ public class VoieController {
 	public ModelAndView changeVoierPost(@Valid Voie voie,  BindingResult bindingResult
 			) {
 		ModelAndView modelView = new ModelAndView();
+		int errorDetected = 0;
+		if(voie.getVoie_name().length() > 30 || voie.getVoie_name().length() < 3) {
+			modelView.addObject("errorname", "error_voie_name");		
+			errorDetected++;
+		}
+		if(cotationVerification(voie.getVoie_cotation()) == false) {	
+			modelView.addObject("errorcotation", "error_voie_cotation");
+			errorDetected++;
+		}
+
+		
+		
 		Voie voidUpdate = voieRepository.getOne(voie.getVoie_id());
 		Voie voieResearchByName = voieRepository.findByVoie_name(voie.getVoie_name());
 		Long secteurId = voidUpdate.getSecteur().getSecteur_id();
-		Long idVerificationVoieResearched = (long) -1;
-		if(voieResearchByName != null) {
-			idVerificationVoieResearched = voieResearchByName.getVoie_id();
+		
+		if(errorDetected != 0) {
+			modelView.setViewName("redirect:/changevoie?id="+voie.getVoie_id());
 		}
-		Long idVerificationVoierUpdated = voie.getVoie_id();
-		// if both id corresponds then the name hasn't been changed but other informations may have been
-		if(voieResearchByName == null || idVerificationVoieResearched.equals(idVerificationVoierUpdated)) {
-			voidUpdate.setVoie_name(voie.getVoie_name());
-			voidUpdate.setVoie_cotation(voie.getVoie_cotation());
-			voieRepository.save(voidUpdate);
-			modelView.setViewName("redirect:/listevoie?id="+secteurId);
-		}
-		else {
-			modelView.setViewName("redirect:/listevoie?id="+secteurId);
+		
+		if(errorDetected == 0) {
+			Long idVerificationVoieResearched = (long) -1;
+			if(voieResearchByName != null) {
+				idVerificationVoieResearched = voieResearchByName.getVoie_id();
+			}
+			Long idVerificationVoierUpdated = voie.getVoie_id();
+			// if both id corresponds then the name hasn't been changed but other informations may have been
+			if(voieResearchByName == null || idVerificationVoieResearched.equals(idVerificationVoierUpdated)) {
+				voidUpdate.setVoie_name(voie.getVoie_name());
+				voidUpdate.setVoie_cotation(voie.getVoie_cotation());
+				voieRepository.save(voidUpdate);
+				modelView.setViewName("redirect:/listevoie?id="+secteurId);
+			}	
 		}
 		return modelView;
 	}
@@ -213,6 +269,31 @@ public class VoieController {
 	
 
 	
+	/* Required:
+	[1-4]{1}|[5a]{2}|[5b]{2}|[5c]{2}|
+	[6a]{2}|[6a+]{3}|[6b]{2}|[6b+]{3}|[6c]{2}|[6c+]{3}|
+	[7a]{2}|[7a+]{3}|[7b]{2}|[7b+]{3}|[7c]{2}|[7c+]{3}|
+	[8a]{2}|[8a+]{3}|[8b]{2}|[8b+]{3}|[8c]{2}|[8c+]{3}|
+	[9a]{2}|[9a+]{3}|[9b]{2}|[9b+]{3}|[9c]{2}
+	*/
+	public boolean cotationVerification(String cotationInput) {
+		if(cotationInput.equals("1") || cotationInput.equals("2") || cotationInput.equals("3") || cotationInput.equals("4")
+				|| cotationInput.equals("5a") || cotationInput.equals("5b")|| cotationInput.equals("5c")		
+				|| cotationInput.equals("6a") || cotationInput.equals("6a+")|| cotationInput.equals("6b")	
+				|| cotationInput.equals("6b+")|| cotationInput.equals("6c") || cotationInput.equals("6c+")	
+				|| cotationInput.equals("7a") || cotationInput.equals("7a+")|| cotationInput.equals("7b")	
+				|| cotationInput.equals("7b+")|| cotationInput.equals("7c") || cotationInput.equals("7c+")
+				|| cotationInput.equals("8a") || cotationInput.equals("8a+")|| cotationInput.equals("8b")	
+				|| cotationInput.equals("8b+")|| cotationInput.equals("8c") || cotationInput.equals("8c+")	
+				|| cotationInput.equals("9a") || cotationInput.equals("9a+")|| cotationInput.equals("9b")	
+				|| cotationInput.equals("9b+")|| cotationInput.equals("9c")){
+					return true;
+				}
+		else {
+			return false;
+		}
+
+	}
 	
 	
 }
