@@ -8,7 +8,7 @@ JDK utilisé : 13
 DataBase utilisée : MySQL
 
 
-Framework utilisés : SPRING BOOT, SPRING SECURITY, SPRING DATA, JPA, HIBERNATE, THYMELEAF, MAVEN
+Framework utilisés : SPRING, JPA, HIBERNATE, THYMELEAF, MAVEN
 
 
 
